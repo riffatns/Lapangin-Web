@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lapangin - Book Your Field</title>
-  <!-- Fresh push test - Updated on June 28, 2025 -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -342,8 +341,8 @@
       <img src="{{ asset('img/Basketball-Anime.png') }}" alt="Basketball" />
     </div>
     <div class="hero-text">
-      <h1>Book Your Field. <br /><span style="color:#3b82f6">Reserve, play, and win.</span></h1>
-      <a href="#">Get Started</a>
+        <h1>Book Your Field. <br /><span style="color:#3b82f6">Reserve, play, and win.</span></h1>
+        <a href="{{ url('/starting-page') }}">Get Started</a>
     </div>
   </section>
 
@@ -372,9 +371,9 @@
   </section>
 
   <section class="cta">
-    <h2>Ready to play?</h2>
-    <p>Book your spot on the field now.</p>
-    <a href="#">Book a field</a>
+    <h1><span style="color:#3b82f6; font-size: 2rem;">Ready to play?</span><br />
+    <span style="font-size: 2rem;">Book your spot on the field now.</span></h1>
+    <a href="{{ url('/starting-page') }}">Book a field</a>
   </section>
 
   <footer>
