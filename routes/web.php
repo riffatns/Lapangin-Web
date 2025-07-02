@@ -29,6 +29,10 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
     
+    Route::get('/pesanan', function () {
+        return view('pesanan');
+    })->name('pesanan');
+    
     Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
     Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
 });
