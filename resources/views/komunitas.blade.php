@@ -496,19 +496,19 @@
       <!-- Stats Overview -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-number">8</div>
+          <div class="stat-number">{{ $userStats['total_communities'] }}</div>
           <div class="stat-label">Komunitas Diikuti</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">1,250</div>
+          <div class="stat-number">{{ number_format($userStats['total_points']) }}</div>
           <div class="stat-label">Total Poin</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">42</div>
+          <div class="stat-number">{{ $userStats['total_matches'] }}</div>
           <div class="stat-label">Match Dimainkan</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">#15</div>
+          <div class="stat-number">#{{ $userStats['ranking'] }}</div>
           <div class="stat-label">Peringkat Global</div>
         </div>
       </div>
@@ -518,189 +518,136 @@
         <div class="ranking-header">
           <h2 class="ranking-title">🏆 Top Players This Week</h2>
         </div>
+        @foreach($topPlayers as $index => $player)
         <div class="user-rank">
-          <div class="rank-number">1</div>
+          <div class="rank-number">{{ $index + 1 }}</div>
           <div class="user-info">
-            <div class="user-name">Ahmad Rivaldy</div>
-            <div class="user-level">🏸 Badminton Master</div>
+            <div class="user-name">{{ $player->name }}</div>
+            <div class="user-level">
+              @switch($player->favorite_sport)
+                @case('Badminton')
+                  🏸 Badminton Master
+                  @break
+                @case('Futsal')
+                  ⚽ Futsal Champion
+                  @break
+                @case('Tennis')
+                  🎾 Tennis Enthusiast
+                  @break
+                @case('Basketball')
+                  🏀 Basketball Pro
+                  @break
+                @default
+                  � Sports Enthusiast
+              @endswitch
+            </div>
           </div>
-          <div class="user-points">2,850 pts</div>
+          <div class="user-points">{{ number_format($player->total_points) }} pts</div>
         </div>
-        <div class="user-rank">
-          <div class="rank-number">2</div>
-          <div class="user-info">
-            <div class="user-name">Sari Indah</div>
-            <div class="user-level">⚽ Futsal Champion</div>
-          </div>
-          <div class="user-points">2,720 pts</div>
-        </div>
-        <div class="user-rank">
-          <div class="rank-number">3</div>
-          <div class="user-info">
-            <div class="user-name">{{ Auth::user()->name }}</div>
-            <div class="user-level">🎾 Tennis Enthusiast</div>
-          </div>
-          <div class="user-points">2,650 pts</div>
-        </div>
+        @endforeach
       </div>
 
       <!-- Tab Navigation -->
       <div class="tab-navigation">
-        <button class="tab-btn active">Semua Komunitas</button>
-        <button class="tab-btn">Komunitas Saya</button>
-        <button class="tab-btn">Main Bareng</button>
-        <button class="tab-btn">Tournament</button>
+        <button class="tab-btn active" data-tab="all">Semua Komunitas</button>
+        <button class="tab-btn" data-tab="my">Komunitas Saya</button>
+        <button class="tab-btn" data-tab="play">Main Bareng</button>
+        <button class="tab-btn" data-tab="tournament">Tournament</button>
       </div>
 
       <!-- Communities Grid -->
-      <div class="communities-grid">
-        <!-- Badminton Community -->
-        <div class="community-card">
-          <div class="community-header badminton">
-            <div class="community-sport-icon">🏸</div>
-            <div class="community-name">Badminton Club Bandung</div>
-            <div class="community-description">Komunitas pecinta badminton untuk semua level, dari pemula hingga advanced!</div>
+      <div class="communities-grid" id="communities-grid">
+        @foreach($communities as $community)
+        <div class="community-card" data-type="all {{ $community->is_member ? 'my' : '' }}">
+          <div class="community-header {{ strtolower($community->sport->name) }}">
+            <div class="community-sport-icon">
+              @switch($community->sport->name)
+                @case('Badminton')
+                  🏸
+                  @break
+                @case('Futsal')
+                  ⚽
+                  @break
+                @case('Tennis')
+                  🎾
+                  @break
+                @case('Basketball')
+                  🏀
+                  @break
+                @case('Volleyball')
+                  🏐
+                  @break
+                @default
+                  🏅
+              @endswitch
+            </div>
+            <div class="community-name">{{ $community->name }}</div>
+            <div class="community-description">{{ $community->description }}</div>
             <div class="community-stats">
-              <span class="community-stat">👥 1,245 members</span>
-              <span class="community-stat">🏆 Level Premium</span>
+              <span class="community-stat">👥 {{ $community->members_count ?? 0 }} members</span>
+              <span class="community-stat">🏆 Level {{ $community->level ?? 1 }}</span>
             </div>
           </div>
           <div class="community-content">
             <div class="community-features">
-              <span class="feature-tag highlight">Main Bareng</span>
-              <span class="feature-tag">Tournament</span>
-              <span class="feature-tag">Coaching</span>
-              <span class="feature-tag">Weekly Match</span>
+              @if($community->features)
+                @foreach(explode(',', $community->features) as $feature)
+                  <span class="feature-tag {{ $loop->first ? 'highlight' : '' }}">{{ trim($feature) }}</span>
+                @endforeach
+              @else
+                <span class="feature-tag highlight">General</span>
+              @endif
             </div>
             <div class="community-actions">
-              <a href="#" class="action-btn btn-primary">Gabung</a>
+              @if($community->is_member)
+                <form action="{{ route('community.leave', $community) }}" method="POST" style="display: inline;">
+                  @csrf
+                  <button type="submit" class="action-btn btn-secondary">Keluar</button>
+                </form>
+              @else
+                <form action="{{ route('community.join', $community) }}" method="POST" style="display: inline;">
+                  @csrf
+                  <button type="submit" class="action-btn btn-primary">Gabung</button>
+                </form>
+              @endif
               <a href="#" class="action-btn btn-secondary">Detail</a>
             </div>
           </div>
         </div>
-
-        <!-- Futsal Community -->
-        <div class="community-card">
-          <div class="community-header futsal">
-            <div class="community-sport-icon">⚽</div>
-            <div class="community-name">Futsal Warriors</div>
-            <div class="community-description">Tim futsal kompetitif dengan jadwal latihan rutin dan turnamen berkala.</div>
-            <div class="community-stats">
-              <span class="community-stat">👥 892 members</span>
-              <span class="community-stat">🏆 Level Gold</span>
-            </div>
-          </div>
-          <div class="community-content">
-            <div class="community-features">
-              <span class="feature-tag highlight">Tournament</span>
-              <span class="feature-tag">Team Practice</span>
-              <span class="feature-tag">Strategy</span>
-            </div>
-            <div class="community-actions">
-              <a href="#" class="action-btn btn-primary">Gabung</a>
-              <a href="#" class="action-btn btn-secondary">Detail</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tennis Community -->
-        <div class="community-card">
-          <div class="community-header tennis">
-            <div class="community-sport-icon">🎾</div>
-            <div class="community-name">Tennis Academy</div>
-            <div class="community-description">Belajar teknik tennis profesional dengan coach berpengalaman.</div>
-            <div class="community-stats">
-              <span class="community-stat">👥 567 members</span>
-              <span class="community-stat">🏆 Level Silver</span>
-            </div>
-          </div>
-          <div class="community-content">
-            <div class="community-features">
-              <span class="feature-tag">Coaching</span>
-              <span class="feature-tag highlight">Private Lesson</span>
-              <span class="feature-tag">Doubles Match</span>
-            </div>
-            <div class="community-actions">
-              <a href="#" class="action-btn btn-primary">Gabung</a>
-              <a href="#" class="action-btn btn-secondary">Detail</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Basketball Community -->
-        <div class="community-card">
-          <div class="community-header basketball">
-            <div class="community-sport-icon">🏀</div>
-            <div class="community-name">Streetball Legends</div>
-            <div class="community-description">Komunitas basket streetball dengan culture hip-hop dan skill tinggi.</div>
-            <div class="community-stats">
-              <span class="community-stat">👥 734 members</span>
-              <span class="community-stat">🏆 Level Platinum</span>
-            </div>
-          </div>
-          <div class="community-content">
-            <div class="community-features">
-              <span class="feature-tag">Street Game</span>
-              <span class="feature-tag highlight">3v3 Battle</span>
-              <span class="feature-tag">Skills Challenge</span>
-            </div>
-            <div class="community-actions">
-              <a href="#" class="action-btn btn-primary">Gabung</a>
-              <a href="#" class="action-btn btn-secondary">Detail</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Multi Sport Community -->
-        <div class="community-card">
-          <div class="community-header">
-            <div class="community-sport-icon">🏅</div>
-            <div class="community-name">Multi Sports Hub</div>
-            <div class="community-description">Komunitas untuk semua jenis olahraga, dari voli, ping pong, hingga martial arts.</div>
-            <div class="community-stats">
-              <span class="community-stat">👥 2,156 members</span>
-              <span class="community-stat">🏆 Level Diamond</span>
-            </div>
-          </div>
-          <div class="community-content">
-            <div class="community-features">
-              <span class="feature-tag">Multi Sport</span>
-              <span class="feature-tag highlight">Cross Training</span>
-              <span class="feature-tag">Friendly Match</span>
-              <span class="feature-tag">Events</span>
-            </div>
-            <div class="community-actions">
-              <a href="#" class="action-btn btn-primary">Gabung</a>
-              <a href="#" class="action-btn btn-secondary">Detail</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Beginner Community -->
-        <div class="community-card">
-          <div class="community-header badminton">
-            <div class="community-sport-icon">🌟</div>
-            <div class="community-name">Pemula Semangat</div>
-            <div class="community-description">Khusus untuk pemula yang ingin belajar berbagai olahraga dengan santai dan fun!</div>
-            <div class="community-stats">
-              <span class="community-stat">👥 1,890 members</span>
-              <span class="community-stat">🏆 Level Bronze</span>
-            </div>
-          </div>
-          <div class="community-content">
-            <div class="community-features">
-              <span class="feature-tag highlight">Beginner Friendly</span>
-              <span class="feature-tag">Basic Training</span>
-              <span class="feature-tag">Fun Games</span>
-            </div>
-            <div class="community-actions">
-              <a href="#" class="action-btn btn-primary">Gabung</a>
-              <a href="#" class="action-btn btn-secondary">Detail</a>
-            </div>
-          </div>
-        </div>
+        @endforeach
       </div>
     </div>
   </div>
+
+  <script>
+    // Tab functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const communityCards = document.querySelectorAll('.community-card');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Remove active class from all tabs
+          tabBtns.forEach(tab => tab.classList.remove('active'));
+          // Add active class to clicked tab
+          this.classList.add('active');
+          
+          const activeTab = this.dataset.tab;
+          
+          // Show/hide communities based on tab
+          communityCards.forEach(card => {
+            if (activeTab === 'all') {
+              card.style.display = 'block';
+            } else if (activeTab === 'my') {
+              card.style.display = card.dataset.type.includes('my') ? 'block' : 'none';
+            } else {
+              // For other tabs, show all for now (can be enhanced later)
+              card.style.display = 'block';
+            }
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>

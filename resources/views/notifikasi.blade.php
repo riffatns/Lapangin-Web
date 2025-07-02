@@ -427,6 +427,53 @@
         <button class="tab-btn" onclick="switchTab('system')">Sistem</button>
       </div>
 
+      @if($notifications->count() > 0)
+      <!-- Notifications List -->
+      <div class="notification-list">
+        @foreach($notifications as $notification)
+        <div class="notification-card {{ $notification->read_at ? '' : 'unread' }}">
+          <div class="notification-header">
+            <div class="notification-type">
+              <span class="type-icon">
+                @switch($notification->type)
+                  @case('booking')
+                    📅
+                    @break
+                  @case('payment')
+                    💰
+                    @break
+                  @case('community')
+                    👥
+                    @break
+                  @case('promo')
+                    🎁
+                    @break
+                  @case('achievement')
+                    🏆
+                    @break
+                  @case('system')
+                    ⚠️
+                    @break
+                  @default
+                    🔔
+                @endswitch
+              </span>
+              <span class="type-text">{{ ucfirst($notification->type) }}</span>
+            </div>
+            <span class="notification-time">{{ $notification->created_at->diffForHumans() }}</span>
+          </div>
+          <h3 class="notification-title">{{ $notification->title }}</h3>
+          <p class="notification-message">{{ $notification->message }}</p>
+          @if(!$notification->read_at)
+            <form action="{{ route('notifications.mark-read', $notification) }}" method="POST" style="margin-top: 10px;">
+              @csrf
+              <button type="submit" style="background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px;">Tandai Dibaca</button>
+            </form>
+          @endif
+        </div>
+        @endforeach
+      </div>
+      @else
       <!-- Empty State -->
       <div class="empty-state">
         <div class="empty-icon">🔔</div>
@@ -485,6 +532,17 @@
             </p>
           </div>
         </div>
+      </div>
+      @endif
+
+      <!-- Generate Sample Notifications Button -->
+      <div style="margin-top: 2rem; text-align: center;">
+        <form action="{{ route('notifications.sample') }}" method="POST">
+          @csrf
+          <button type="submit" style="background: #f59e0b; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            Generate Sample Notifications
+          </button>
+        </form>
       </div>
 
       <!-- Sample Notifications (hidden by default) -->

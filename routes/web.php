@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BookingController;
 
 Route::get('/', function () {
     return view('landing');
@@ -25,25 +30,26 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    Route::get('/pesanan', function () {
-        return view('pesanan');
-    })->name('pesanan');
+    Route::get('/pesanan', [BookingController::class, 'index'])->name('pesanan');
     
-    Route::get('/komunitas', function () {
-        return view('komunitas');
-    })->name('komunitas');
+    // Booking routes
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
+    
+    Route::get('/komunitas', [CommunityController::class, 'index'])->name('komunitas');
 
-    Route::get('/notifikasi', function () {
-        return view('notifikasi');
-    })->name('notifikasi');
+    Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifikasi');
 
-    Route::get('/profile', function () {
-        return view('profile');
-    })->name('profile');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     
-    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    // Community routes
+    Route::post('/komunitas/{community}/join', [CommunityController::class, 'join'])->name('community.join');
+    Route::post('/komunitas/{community}/leave', [CommunityController::class, 'leave'])->name('community.leave');
+    
+    // Notification routes
+    Route::post('/notifications/sample', [NotificationController::class, 'createSample'])->name('notifications.sample');
+    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
 });

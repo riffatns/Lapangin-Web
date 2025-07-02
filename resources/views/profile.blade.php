@@ -680,19 +680,19 @@
         <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-number">12</div>
+            <div class="stat-number">{{ $totalBookings }}</div>
             <div class="stat-label">Total Booking</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">3</div>
+            <div class="stat-number">{{ $totalCommunities }}</div>
             <div class="stat-label">Komunitas Diikuti</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">1,250</div>
+            <div class="stat-number">{{ number_format($totalPoints) }}</div>
             <div class="stat-label">Total Poin</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">#25</div>
+            <div class="stat-number">#{{ $ranking }}</div>
             <div class="stat-label">Ranking</div>
           </div>
         </div>
@@ -723,11 +723,11 @@
               </div>
               <div class="form-group">
                 <label for="phone">Nomor Telepon</label>
-                <input type="tel" id="phone" name="phone" placeholder="+62 812-3456-7890">
+                <input type="tel" id="phone" name="phone" value="{{ Auth::user()->phone }}" placeholder="+62 812-3456-7890">
               </div>
               <div class="form-group">
                 <label for="birthdate">Tanggal Lahir</label>
-                <input type="date" id="birthdate" name="birthdate">
+                <input type="date" id="birthdate" name="birthdate" value="{{ $profile?->birthdate }}">
               </div>
             </div>
           </div>
@@ -739,20 +739,20 @@
                 <label for="city">Kota</label>
                 <select id="city" name="city">
                   <option value="">Pilih Kota</option>
-                  <option value="bandung">Bandung</option>
-                  <option value="jakarta">Jakarta</option>
-                  <option value="surabaya">Surabaya</option>
-                  <option value="medan">Medan</option>
-                  <option value="yogyakarta">Yogyakarta</option>
+                  <option value="bandung" {{ $profile?->city == 'bandung' ? 'selected' : '' }}>Bandung</option>
+                  <option value="jakarta" {{ $profile?->city == 'jakarta' ? 'selected' : '' }}>Jakarta</option>
+                  <option value="surabaya" {{ $profile?->city == 'surabaya' ? 'selected' : '' }}>Surabaya</option>
+                  <option value="medan" {{ $profile?->city == 'medan' ? 'selected' : '' }}>Medan</option>
+                  <option value="yogyakarta" {{ $profile?->city == 'yogyakarta' ? 'selected' : '' }}>Yogyakarta</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="district">Kecamatan</label>
-                <input type="text" id="district" name="district" placeholder="Contoh: Coblong">
+                <input type="text" id="district" name="district" value="{{ $profile?->district }}" placeholder="Contoh: Coblong">
               </div>
               <div class="form-group" style="grid-column: 1 / -1;">
                 <label for="address">Alamat Lengkap</label>
-                <textarea id="address" name="address" placeholder="Masukkan alamat lengkap Anda"></textarea>
+                <textarea id="address" name="address" placeholder="Masukkan alamat lengkap Anda">{{ $profile?->address }}</textarea>
               </div>
             </div>
           </div>

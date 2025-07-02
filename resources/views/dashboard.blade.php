@@ -413,107 +413,23 @@
 
       <!-- Fields Grid -->
       <div class="cards-grid">
-        <!-- Badminton Field -->
+        @foreach($venues as $venue)
         <div class="field-card">
-          <div class="card-image badminton">
-            <div class="location-badge">📍 Kota Bandung</div>
+          <div class="card-image {{ strtolower($venue->sport->name) }}">
+            <div class="location-badge">📍 {{ $venue->location }}</div>
           </div>
           <div class="card-content">
-            <h3 class="card-title">GOR Badminton Telyu</h3>
+            <h3 class="card-title">{{ $venue->name }}</h3>
             <div class="card-rating">
-              <span class="stars">⭐ 5.0</span>
-              <span class="rating-text">(21)</span>
+              <span class="stars">⭐ {{ number_format($venue->rating, 1) }}</span>
+              <span class="rating-text">({{ $venue->total_reviews }})</span>
             </div>
             <div class="card-price">
-              Mulai <span class="price-highlight">Rp 50.000</span>/jam
+              Mulai <span class="price-highlight">Rp {{ number_format($venue->price_per_hour, 0, ',', '.') }}</span>/jam
             </div>
           </div>
         </div>
-
-        <!-- Futsal Field -->
-        <div class="field-card">
-          <div class="card-image futsal">
-            <div class="location-badge">📍 Kota Bandung</div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">GOR Futsal Telyu</h3>
-            <div class="card-rating">
-              <span class="stars">⭐ 5.0</span>
-              <span class="rating-text">(21)</span>
-            </div>
-            <div class="card-price">
-              Mulai <span class="price-highlight">Rp 50.000</span>/jam
-            </div>
-          </div>
-        </div>
-
-        <!-- Tennis Field -->
-        <div class="field-card">
-          <div class="card-image tennis">
-            <div class="location-badge">📍 Kota Bandung</div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Lapangan Tennis Telyu</h3>
-            <div class="card-rating">
-              <span class="stars">⭐ 5.0</span>
-              <span class="rating-text">(21)</span>
-            </div>
-            <div class="card-price">
-              Mulai <span class="price-highlight">Rp 50.000</span>/jam
-            </div>
-          </div>
-        </div>
-
-        <!-- Basketball Field -->
-        <div class="field-card">
-          <div class="card-image basketball">
-            <div class="location-badge">📍 Kota Bandung</div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Lapangan Basket Telyu</h3>
-            <div class="card-rating">
-              <span class="stars">⭐ 5.0</span>
-              <span class="rating-text">(21)</span>
-            </div>
-            <div class="card-price">
-              Mulai <span class="price-highlight">Rp 50.000</span>/jam
-            </div>
-          </div>
-        </div>
-
-        <!-- Volleyball Field -->
-        <div class="field-card">
-          <div class="card-image volleyball">
-            <div class="location-badge">📍 Kota Bandung</div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Lapangan Volleyball Telyu</h3>
-            <div class="card-rating">
-              <span class="stars">⭐ 5.0</span>
-              <span class="rating-text">(21)</span>
-            </div>
-            <div class="card-price">
-              Mulai <span class="price-highlight">Rp 50.000</span>/jam
-            </div>
-          </div>
-        </div>
-
-        <!-- Additional Field -->
-        <div class="field-card">
-          <div class="card-image badminton">
-            <div class="location-badge">📍 Kota Bandung</div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Lapangan Indoor Telyu</h3>
-            <div class="card-rating">
-              <span class="stars">⭐ 5.0</span>
-              <span class="rating-text">(21)</span>
-            </div>
-            <div class="card-price">
-              Mulai <span class="price-highlight">Rp 50.000</span>/jam
-            </div>
-          </div>
-        </div>
+        @endforeach
       </div>
     </div>
   </div>

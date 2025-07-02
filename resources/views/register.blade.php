@@ -41,18 +41,33 @@
     }
     form {
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       display: flex;
       flex-direction: column;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group.full-width {
+      grid-column: 1 / -1;
     }
     label {
       display: block;
       font-size: 14px;
       margin-bottom: 5px;
-      margin-top: 16px;
       text-align: left;
+      font-weight: 500;
     }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 12px 16px;
       border: none;
@@ -61,6 +76,10 @@
       font-size: 16px;
       margin-bottom: 8px;
       box-sizing: border-box;
+      color: #333;
+    }
+    select {
+      cursor: pointer;
     }
     textarea {
       resize: none;
@@ -86,12 +105,26 @@
       font-size: 14px;
       margin-top: 4px;
     }
+    
+    .success {
+      color: #51cf66;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    
+    .section-title {
+      color: #f59e0b;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="register-container">
-    <h1>Register your account</h1>
-    <h1>Sign up to access features.</h1>
+    <h1>Daftar Akun Baru</h1>
+    <h2>Lengkapi data diri untuk mengakses semua fitur Lapangin</h2>
     
     @if(session('error'))
       <div class="error">{{ session('error') }}</div>
@@ -99,31 +132,113 @@
     
     <form action="{{ url('/register') }}" method="POST">
       @csrf
-      <label for="name">Name</label>
-      <input type="text" id="name" name="name" placeholder="Jane Smith" value="{{ old('name') }}" required>
-      @error('name')
-        <div class="error">{{ $message }}</div>
-      @enderror
+      
+      <!-- Data Pribadi -->
+      <div class="section-title">📝 Data Pribadi</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Nama Lengkap</label>
+          <input type="text" id="name" name="name" placeholder="Ahmad Rivaldy" value="{{ old('name') }}" required>
+          @error('name')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" placeholder="jane@lapangin.com" value="{{ old('email') }}" required>
-      @error('email')
-        <div class="error">{{ $message }}</div>
-      @enderror
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="ahmad@lapangin.com" value="{{ old('email') }}" required>
+          @error('email')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" placeholder="Your password" required>
-      @error('password')
-        <div class="error">{{ $message }}</div>
-      @enderror
+        <div class="form-group">
+          <label for="phone">Nomor Telepon</label>
+          <input type="tel" id="phone" name="phone" placeholder="+62 812-3456-7890" value="{{ old('phone') }}" required>
+          @error('phone')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
 
-      <label for="confirm_password">Confirm Password</label>
-      <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
-      @error('confirm_password')
-        <div class="error">{{ $message }}</div>
-      @enderror
+        <div class="form-group">
+          <label for="birthdate">Tanggal Lahir</label>
+          <input type="date" id="birthdate" name="birthdate" value="{{ old('birthdate') }}" required>
+          @error('birthdate')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
+      </div>
 
-      <button type="submit">Create account.</button>
+      <!-- Lokasi & Preferensi -->
+      <div class="section-title">📍 Lokasi & Preferensi Olahraga</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="city">Kota</label>
+          <select id="city" name="city" required>
+            <option value="">Pilih Kota</option>
+            <option value="bandung" {{ old('city') == 'bandung' ? 'selected' : '' }}>Bandung</option>
+            <option value="jakarta" {{ old('city') == 'jakarta' ? 'selected' : '' }}>Jakarta</option>
+            <option value="surabaya" {{ old('city') == 'surabaya' ? 'selected' : '' }}>Surabaya</option>
+            <option value="medan" {{ old('city') == 'medan' ? 'selected' : '' }}>Medan</option>
+            <option value="yogyakarta" {{ old('city') == 'yogyakarta' ? 'selected' : '' }}>Yogyakarta</option>
+          </select>
+          @error('city')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="form-group">
+          <label for="favorite_sport">Olahraga Favorit</label>
+          <select id="favorite_sport" name="favorite_sport" required>
+            <option value="">Pilih Olahraga</option>
+            <option value="badminton" {{ old('favorite_sport') == 'badminton' ? 'selected' : '' }}>Badminton</option>
+            <option value="futsal" {{ old('favorite_sport') == 'futsal' ? 'selected' : '' }}>Futsal</option>
+            <option value="tennis" {{ old('favorite_sport') == 'tennis' ? 'selected' : '' }}>Tennis</option>
+            <option value="basketball" {{ old('favorite_sport') == 'basketball' ? 'selected' : '' }}>Basketball</option>
+            <option value="volleyball" {{ old('favorite_sport') == 'volleyball' ? 'selected' : '' }}>Volleyball</option>
+          </select>
+          @error('favorite_sport')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
+      </div>
+
+      <!-- Keamanan Akun -->
+      <div class="section-title">🔒 Keamanan Akun</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Minimal 8 karakter" required>
+          @error('password')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_password">Konfirmasi Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" placeholder="Ulangi password" required>
+          @error('confirm_password')
+            <div class="error">{{ $message }}</div>
+          @enderror
+        </div>
+      </div>
+
+      <!-- Bio Singkat -->
+      <div class="section-title">📝 Tentang Anda (Opsional)</div>
+      <div class="form-group full-width">
+        <label for="bio">Bio Singkat</label>
+        <textarea id="bio" name="bio" placeholder="Ceritakan sedikit tentang diri Anda dan pengalaman olahraga...">{{ old('bio') }}</textarea>
+        @error('bio')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
+
+      <button type="submit">Daftar Sekarang</button>
+      
+      <div style="text-align: center; margin-top: 16px;">
+        <span style="color: #b3b3b3;">Sudah punya akun? </span>
+        <a href="{{ url('/login') }}" style="color: #f59e0b; text-decoration: none;">Login di sini</a>
+      </div>
     </form>
   </div>
 
