@@ -33,6 +33,17 @@ Route::middleware('auth')->group(function () {
         return view('pesanan');
     })->name('pesanan');
     
-    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::get('/komunitas', function () {
+        return view('komunitas');
+    })->name('komunitas');
+
+    Route::get('/notifikasi', function () {
+        return view('notifikasi');
+    })->name('notifikasi');
+
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
+    
     Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
 });

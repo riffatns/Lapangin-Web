@@ -350,18 +350,18 @@
         <span class="icon">📋</span>
         <span>Pesanan</span>
       </a>
-      <a href="#" class="nav-item">
-        <span class="icon">📊</span>
-        <span>History</span>
+      <a href="{{ route('komunitas') }}" class="nav-item">
+        <span class="icon">👥</span>
+        <span>Komunitas</span>
       </a>
     </div>
     
     <div class="user-section">
-      <a href="#" class="user-item">
+      <a href="{{ route('notifikasi') }}" class="nav-item {{ request()->routeIs('notifikasi') ? 'active' : '' }}">
         <span class="icon">🔔</span>
         <span>Notification Settings</span>
       </a>
-      <a href="#" class="user-item">
+      <a href="{{ route('profile') }}" class="nav-item {{ request()->routeIs('profile') ? 'active' : '' }}">
         <span class="icon">👤</span>
         <span>Profile</span>
       </a>
