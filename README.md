@@ -1,6 +1,6 @@
 # 🏟️ Lapangin - Sports Field Booking Platform
 
-![Lapangin Logo](public/img/Lapangin-Black.png)
+![Lapangin Logo](public/img/Lapangin-White.png)
 
 Lapangin adalah platform booking lapangan olahraga yang memudahkan pengguna untuk mencari, memesan, dan mengelola reservasi lapangan olahraga seperti sepak bola, basket, tenis, dan badminton.
 
