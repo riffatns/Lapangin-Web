@@ -147,6 +147,13 @@
       border-radius: 20px;
       text-decoration: none;
       font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .hero-text a:hover {
+      background: #3b82f6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
     .cards {
       display: flex;
@@ -201,13 +208,23 @@
       border-radius: 20px;
       text-decoration: none;
       font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .cta a:hover {
+      background: #3b82f6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
     footer {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      align-items: flex-start;
       padding: 2rem;
       font-size: 0.9rem;
       background: #1e1e1f;
+      flex-wrap: wrap;
+      gap: 2rem;
     }
     .footer-section {
       display: flex;

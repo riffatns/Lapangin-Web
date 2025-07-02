@@ -73,22 +73,30 @@
       border: 2px solid white;
     }
     .btn-login:hover {
-      background-color: #f0f0f0;
-      border-color: #f0f0f0;
+      background-color: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
     }
     footer {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      align-items: flex-start;
       padding: 2rem;
       font-size: 0.9rem;
       background: #1e1e1f;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .footer-content {
+      display: flex;
+      gap: 2rem;
       flex-wrap: wrap;
     }
     .footer-section {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      min-width: 150px;
+      min-width: 100px;
     }
     .footer-section a {
       color: #bbb;
@@ -146,29 +154,31 @@
     <div class="logo">
       <img src="{{ asset('img/Lapangin-White.png') }}" alt="Lapangin Logo" style="height: 30px;">
     </div>
-    <div class="footer-section">
-      <strong>Company</strong>
-      <a href="#">About</a>
-      <a href="#">Price</a>
-      <a href="#">Contact</a>
-    </div>
-    <div class="footer-section">
-      <strong>Support</strong>
-      <a href="#">FAQs</a>
-      <a href="#">Help Center</a>
-      <a href="#">Terms</a>
-    </div>
-    <div class="footer-section">
-      <strong>Company</strong>
-      <a href="#">Instagram</a>
-      <a href="#">Facebook</a>
-      <a href="#">Twitter</a>
-    </div>
-    <div class="footer-section">
-      <strong>Locations</strong>
-      <a href="#">Football Fields</a>
-      <a href="#">Tennis Courts</a>
-      <a href="#">Badminton Courts</a>
+    <div class="footer-content">
+      <div class="footer-section">
+        <strong>Company</strong>
+        <a href="#">About</a>
+        <a href="#">Price</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-section">
+        <strong>Support</strong>
+        <a href="#">FAQs</a>
+        <a href="#">Help Center</a>
+        <a href="#">Terms</a>
+      </div>
+      <div class="footer-section">
+        <strong>Company</strong>
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+        <a href="#">Twitter</a>
+      </div>
+      <div class="footer-section">
+        <strong>Locations</strong>
+        <a href="#">Football Fields</a>
+        <a href="#">Tennis Courts</a>
+        <a href="#">Badminton Courts</a>
+      </div>
     </div>
   </footer>
 </body>
