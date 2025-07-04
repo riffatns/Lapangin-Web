@@ -3,6 +3,8 @@
 require 'vendor/autoload.php';
 
 use App\Models\Booking;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 // Bootstrap Laravel
 $app = require_once 'bootstrap/app.php';
@@ -12,7 +14,14 @@ echo "🧹 Cleaning up test bookings...\n\n";
 
 // Delete all bookings (be careful in production!)
 $deletedCount = Booking::count();
-Booking::truncate();
+
+// Delete related records first if they exist
+if (Schema::hasTable('payments')) {
+    DB::table('payments')->delete();
+}
+
+// Then delete bookings
+Booking::query()->delete();
 
 echo "✅ Deleted {$deletedCount} test bookings\n";
 echo "🎯 Database is now clean for fresh testing\n\n";

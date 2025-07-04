@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             VenuesSeeder::class,
             CommunitiesSeeder::class,
             BookingsSeeder::class,
-            ReviewsSeeder::class,
+            ReviewSeeder::class,
         ]);
     }
 }

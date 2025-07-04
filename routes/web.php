@@ -40,6 +40,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/venue/{venue}/book', [BookingController::class, 'store'])->name('venue.book');
     
     // Booking routes
+    Route::get('/booking/{booking}/checkout', [BookingController::class, 'checkout'])->name('booking.checkout');
+    Route::post('/booking/{booking}/payment', [BookingController::class, 'processPayment'])->name('booking.payment');
+    Route::get('/booking/payment/success', function() {
+        return view('payment-success');
+    })->name('booking.payment.success');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
     
     Route::get('/komunitas', [CommunityController::class, 'index'])->name('komunitas');

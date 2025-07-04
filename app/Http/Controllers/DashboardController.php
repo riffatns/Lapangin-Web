@@ -151,16 +151,8 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        // Calculate average rating
-        $averageRating = $venue->bookings()
-            ->whereNotNull('rating')
-            ->avg('rating') ?? 0;
-
-        // Update venue's rating field
-        $venue->update([
-            'rating' => $averageRating,
-            'total_reviews' => $venue->bookings()->whereNotNull('rating')->count()
-        ]);
+        // Use venue's stored rating (already calculated and stored by seeder)
+        $averageRating = $venue->rating ?? 0;
 
         // Get similar venues
         $similarVenues = Venue::where('sport_id', $venue->sport_id)

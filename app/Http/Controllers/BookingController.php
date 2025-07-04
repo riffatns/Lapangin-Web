@@ -98,18 +98,64 @@ class BookingController extends Controller
             'duration_hours' => count($selectedSlots),
             'total_price' => $totalPrice,
             'status' => 'pending',
+            'payment_status' => 'pending',
             'booking_code' => 'LAP-' . strtoupper(uniqid()),
-            'selected_time_slots' => json_encode($selectedSlots) // Store selected slots for reference
+            'selected_time_slots' => $selectedSlots
         ]);
 
-        // Create payment record
-        $booking->payment()->create([
-            'user_id' => auth()->id(),
-            'amount' => $totalPrice,
-            'payment_method' => 'pending',
-            'status' => 'pending'
+        return redirect()->route('booking.checkout', $booking)->with('success', 'Booking berhasil dibuat! Silakan lakukan pembayaran.');
+    }
+
+    public function checkout(Booking $booking)
+    {
+        // Ensure user can only access their own booking
+        if ($booking->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Check if booking is still valid (not expired, cancelled, etc.)
+        if ($booking->status === 'cancelled') {
+            return redirect()->route('pesanan')->with('error', 'Booking sudah dibatalkan.');
+        }
+
+        if ($booking->status === 'confirmed') {
+            return redirect()->route('pesanan')->with('info', 'Booking sudah terkonfirmasi.');
+        }
+
+        $venue = $booking->venue->load('sport');
+        $user = auth()->user()->load('profile');
+
+        return view('booking-checkout', compact('booking', 'venue', 'user'));
+    }
+
+    public function processPayment(Request $request, Booking $booking)
+    {
+        // Ensure user can only process payment for their own booking
+        if ($booking->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'payment_method' => 'required|in:transfer,ewallet,credit_card',
+            'bank_name' => 'required_if:payment_method,transfer',
+            'ewallet_type' => 'required_if:payment_method,ewallet'
         ]);
 
-        return redirect()->route('pesanan')->with('success', 'Booking berhasil dibuat! Silakan lakukan pembayaran.');
+        // For now, we'll simulate payment processing
+        // In real implementation, this would integrate with payment gateway
+
+        $booking->update([
+            'status' => 'confirmed',
+            'payment_status' => 'paid'
+        ]);
+
+        // Update user profile statistics
+        $userProfile = auth()->user()->profile;
+        if ($userProfile) {
+            $userProfile->increment('total_bookings');
+            $userProfile->increment('total_points', 10); // Award 10 points per booking
+        }
+
+        return redirect()->route('booking.payment.success')->with('success', 'Pembayaran berhasil! Booking telah dikonfirmasi.');
     }
 }
