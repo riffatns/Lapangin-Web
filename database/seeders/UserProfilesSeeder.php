@@ -113,6 +113,4 @@ class UserProfilesSeeder extends Seeder
     }
 }
 
-Saturday, July 5, 2025 5:07:24 AM
-
 

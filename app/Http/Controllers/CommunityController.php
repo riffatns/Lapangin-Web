@@ -66,13 +66,22 @@ class CommunityController extends Controller
             'ranking' => UserProfile::where('total_points', '>', $userPoints)->count() + 1
         ];
 
-        // Get top players for ranking section
-        $topPlayers = User::join('user_profiles', 'users.id', '=', 'user_profiles.user_id')
-            ->where('users.is_active', true)
-            ->orderBy('user_profiles.total_points', 'desc')
+        // Get top players for ranking section - Use UserProfile model directly
+        $topPlayers = UserProfile::with('user')
+            ->whereHas('user', function($query) {
+                $query->where('is_active', true);
+            })
+            ->where('total_points', '>', 0)
+            ->orderBy('total_points', 'desc')
             ->limit(5)
-            ->select('users.name', 'user_profiles.total_points', 'user_profiles.favorite_sport')
-            ->get();
+            ->get()
+            ->map(function($profile) {
+                return (object)[
+                    'name' => $profile->user->name,
+                    'total_points' => $profile->total_points,
+                    'favorite_sport' => $profile->favorite_sport
+                ];
+            });
 
         return view('komunitas', compact(
             'userCommunities',
@@ -141,7 +150,5 @@ class CommunityController extends Controller
         return redirect()->back()->with('success', 'Berhasil keluar dari komunitas ' . $community->name);
     }
 }
-
-Saturday, July 5, 2025 5:07:35 AM
 
 
