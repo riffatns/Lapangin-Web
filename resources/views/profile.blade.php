@@ -634,7 +634,7 @@
     <div class="user-section">
       <a href="{{ route('notifikasi') }}" class="user-item">
         <span class="icon">🔔</span>
-        <span>Notification Settings</span>
+        <span>Notification</span>
       </a>
       <a href="{{ route('profile') }}" class="user-item active">
         <span class="icon">👤</span>

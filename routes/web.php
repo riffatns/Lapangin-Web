@@ -34,6 +34,11 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/pesanan', [BookingController::class, 'index'])->name('pesanan');
     
+    // Venue routes
+    Route::get('/venue/{venue}', [DashboardController::class, 'show'])->name('venue.show');
+    Route::get('/venue/{venue}/booking-data', [DashboardController::class, 'getBookingData'])->name('venue.booking-data');
+    Route::post('/venue/{venue}/book', [BookingController::class, 'store'])->name('venue.book');
+    
     // Booking routes
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
     

@@ -202,11 +202,18 @@
       margin-top: 1rem;
     }
     
+    .field-card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
     .field-card {
       background-color: #2c2c2e;
       border-radius: 12px;
       overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
     }
     
     .field-card:hover {
@@ -214,11 +221,25 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
     
+    .field-card-link:hover .field-card {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.2);
+    }
+    
     .card-image {
       height: 180px;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       position: relative;
       overflow: hidden;
+    }
+    
+    .card-image img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     
     .card-image.badminton {
@@ -359,7 +380,7 @@
     <div class="user-section">
       <a href="{{ route('notifikasi') }}" class="nav-item {{ request()->routeIs('notifikasi') ? 'active' : '' }}">
         <span class="icon">🔔</span>
-        <span>Notification Settings</span>
+        <span>Notification</span>
       </a>
       <a href="{{ route('profile') }}" class="nav-item {{ request()->routeIs('profile') ? 'active' : '' }}">
         <span class="icon">👤</span>
@@ -414,21 +435,27 @@
       <!-- Fields Grid -->
       <div class="cards-grid">
         @foreach($venues as $venue)
-        <div class="field-card">
-          <div class="card-image {{ strtolower($venue->sport->name) }}">
-            <div class="location-badge">📍 {{ $venue->location }}</div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">{{ $venue->name }}</h3>
-            <div class="card-rating">
-              <span class="stars">⭐ {{ number_format($venue->rating, 1) }}</span>
-              <span class="rating-text">({{ $venue->total_reviews }})</span>
+        <a href="{{ route('venue.show', $venue) }}" class="field-card-link">
+          <div class="field-card">
+            <div class="card-image {{ strtolower($venue->sport->name) }}">
+              @if($venue->main_image)
+                <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
+                     alt="{{ $venue->name }}">
+              @endif
+              <div class="location-badge">📍 {{ $venue->location }}</div>
             </div>
-            <div class="card-price">
-              Mulai <span class="price-highlight">Rp {{ number_format($venue->price_per_hour, 0, ',', '.') }}</span>/jam
+            <div class="card-content">
+              <h3 class="card-title">{{ $venue->name }}</h3>
+              <div class="card-rating">
+                <span class="stars">⭐ {{ number_format($venue->rating, 1) }}</span>
+                <span class="rating-text">({{ $venue->total_reviews }})</span>
+              </div>
+              <div class="card-price">
+                Mulai <span class="price-highlight">Rp {{ number_format($venue->price_per_hour, 0, ',', '.') }}</span>/jam
+              </div>
             </div>
           </div>
-        </div>
+        </a>
         @endforeach
       </div>
     </div>

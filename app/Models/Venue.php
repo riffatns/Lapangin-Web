@@ -21,6 +21,8 @@ class Venue extends Model
         'price_per_hour',
         'images',
         'facilities',
+        'main_image',
+        'gallery_images',
         'open_time',
         'close_time',
         'rating',
@@ -33,6 +35,7 @@ class Venue extends Model
         'rating' => 'decimal:2',
         'images' => 'array',
         'facilities' => 'array',
+        'gallery_images' => 'array',
         'is_active' => 'boolean',
         'open_time' => 'datetime:H:i',
         'close_time' => 'datetime:H:i'
@@ -46,5 +49,21 @@ class Venue extends Model
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Update venue rating and review count based on bookings
+     */
+    public function updateRatingAndReviews()
+    {
+        $avgRating = $this->bookings()->whereNotNull('rating')->avg('rating') ?? 0;
+        $totalReviews = $this->bookings()->whereNotNull('rating')->count();
+
+        $this->update([
+            'rating' => round($avgRating, 2),
+            'total_reviews' => $totalReviews
+        ]);
+
+        return $this;
     }
 }

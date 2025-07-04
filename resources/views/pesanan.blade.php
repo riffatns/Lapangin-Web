@@ -253,6 +253,16 @@
       color: #60a5fa;
     }
     
+    .status-pending {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+    }
+    
+    .status-confirmed {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+    
     .status-completed {
       background-color: rgba(16, 185, 129, 0.2);
       color: #34d399;
@@ -362,7 +372,7 @@
     <div class="user-section">
       <a href="{{ route('notifikasi') }}" class="nav-item {{ request()->routeIs('notifikasi') ? 'active' : '' }}">
         <span class="icon">🔔</span>
-        <span>Notification Settings</span>
+        <span>Notification</span>
       </a>
       <a href="{{ route('profile') }}" class="nav-item {{ request()->routeIs('profile') ? 'active' : '' }}">
         <span class="icon">👤</span>
@@ -405,25 +415,7 @@
       @endif
 
       <!-- Orders Content -->
-      @php
-        // Simulasi data - di aplikasi nyata ini akan dari database
-        $orders = []; // Kosong untuk simulasi empty state
-        
-        // Contoh data jika ada pesanan:
-        // $orders = [
-        //   [
-        //     'id' => 1,
-        //     'field_name' => 'GOR Badminton Telyu',
-        //     'date' => '2025-07-05',
-        //     'time' => '14:00 - 16:00',
-        //     'duration' => '2 jam',
-        //     'price' => 100000,
-        //     'status' => 'upcoming'
-        //   ]
-        // ];
-      @endphp
-
-      @if(empty($orders))
+      @if($bookings->isEmpty())
         <!-- Empty State -->
         <div class="empty-state">
           <div class="empty-icon">📅</div>
@@ -439,15 +431,17 @@
       @else
         <!-- Orders Grid -->
         <div class="orders-grid">
-          @foreach($orders as $order)
+          @foreach($bookings as $booking)
             <div class="order-card">
               <div class="order-header">
                 <div>
-                  <h3 class="order-title">{{ $order['field_name'] }}</h3>
-                  <div class="order-status status-{{ $order['status'] }}">
-                    @if($order['status'] == 'upcoming')
-                      Akan Datang
-                    @elseif($order['status'] == 'completed')
+                  <h3 class="order-title">{{ $booking->venue->name }}</h3>
+                  <div class="order-status status-{{ $booking->status }}">
+                    @if($booking->status == 'pending')
+                      Menunggu Pembayaran
+                    @elseif($booking->status == 'confirmed')
+                      Dikonfirmasi
+                    @elseif($booking->status == 'completed')
                       Selesai
                     @else
                       Dibatalkan
@@ -459,26 +453,35 @@
               <div class="order-details">
                 <div class="detail-row">
                   <span>Tanggal:</span>
-                  <span class="detail-value">{{ date('d M Y', strtotime($order['date'])) }}</span>
+                  <span class="detail-value">{{ $booking->booking_date->format('d M Y') }}</span>
                 </div>
                 <div class="detail-row">
                   <span>Waktu:</span>
-                  <span class="detail-value">{{ $order['time'] }}</span>
+                  <span class="detail-value">{{ $booking->start_time }} - {{ $booking->end_time }}</span>
                 </div>
                 <div class="detail-row">
                   <span>Durasi:</span>
-                  <span class="detail-value">{{ $order['duration'] }}</span>
+                  <span class="detail-value">{{ $booking->duration_hours }} jam</span>
                 </div>
                 <div class="detail-row">
                   <span>Total:</span>
-                  <span class="detail-value">Rp {{ number_format($order['price'], 0, ',', '.') }}</span>
+                  <span class="detail-value">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
                 </div>
               </div>
               
               <div class="order-actions">
-                @if($order['status'] == 'upcoming')
+                @if($booking->status == 'confirmed')
                   <button class="action-btn btn-primary">Lihat Detail</button>
-                  <button class="action-btn btn-secondary">Batalkan</button>
+                  <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
+                  </form>
+                @elseif($booking->status == 'pending')
+                  <button class="action-btn btn-primary">Bayar Sekarang</button>
+                  <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
+                  </form>
                 @else
                   <button class="action-btn btn-secondary">Lihat Detail</button>
                 @endif

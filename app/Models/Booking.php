@@ -23,7 +23,10 @@ class Booking extends Model
         'notes',
         'confirmed_at',
         'cancelled_at',
-        'cancellation_reason'
+        'cancellation_reason',
+        'rating',
+        'review',
+        'selected_time_slots'
     ];
 
     protected $casts = [
@@ -32,7 +35,8 @@ class Booking extends Model
         'end_time' => 'datetime:H:i',
         'total_price' => 'decimal:2',
         'confirmed_at' => 'datetime',
-        'cancelled_at' => 'datetime'
+        'cancelled_at' => 'datetime',
+        'selected_time_slots' => 'array'
     ];
 
     public function user()
