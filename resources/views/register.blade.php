@@ -14,14 +14,20 @@
       background-color: #2c2c2e;
       color: white;
       display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .main-content {
+      flex: 1;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
     }
     .register-container {
       width: 100%;
       max-width: 600px;
-      padding: 32px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -122,7 +128,8 @@
   </style>
 </head>
 <body>
-  <div class="register-container">
+  <div class="main-content">
+    <div class="register-container">
     <h1>Daftar Akun Baru</h1>
     <h2>Lengkapi data diri untuk mengakses semua fitur Lapangin</h2>
     
@@ -261,6 +268,11 @@
     });
   </script>
   @endif
+
+  </div>
+
+  <!-- Include Footer Component -->
+  @include('components.footer')
 
 </body>
 </html>

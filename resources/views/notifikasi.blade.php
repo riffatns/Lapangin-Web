@@ -89,6 +89,12 @@
       text-decoration: none;
       color: #999;
       font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
     
     .user-item:hover {

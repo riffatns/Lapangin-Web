@@ -14,33 +14,44 @@
     }
     header {
       position: sticky;
-      top: 0;
+      top: 1rem; /* Beri jarak dari atas */
       z-index: 1000;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 960px; /* Lebar sesuai Figma */
+      width: 1550px; /* Lebar sesuai Figma */
       height: 64px; /* Tinggi sesuai Figma */
       padding: 0 2rem; /* Padding horizontal untuk konten */
-      background: white;
+      background: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+      backdrop-filter: blur(10px); /* Glassmorphism effect */
+      -webkit-backdrop-filter: blur(10px); /* Safari support */
       margin: 1rem auto; /* Auto margin untuk center */
       border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
       box-sizing: border-box; /* Include padding dalam width calculation */
     }
-    /* Optional: Add a different style when scrolled */
+    /* More transparent when scrolled */
     header.scrolled {
-      margin: 0 auto; /* Tetap center saat scroll */
-      width: 960px; /* Tetap sama saat scroll */
+      top: 1rem; /* Sedikit lebih jauh dari atas ketika scrolled */
+      margin: 1rem auto; /* Margin tetap sama seperti default */
+      width: 1550px; /* Tetap sama saat scroll */
       height: 64px; /* Tetap sama saat scroll */
-      border-radius: 0 0 10px 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.6); /* Much more transparent when scrolled */
+      backdrop-filter: blur(15px); /* Stronger blur when scrolled */
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 10px; /* Tetap sama seperti default */
+      border: 1px solid rgba(255, 255, 255, 0.15); /* More subtle border */
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Much softer shadow */
     }
     .logo {
       font-size: 1.5rem;
       font-weight: bold;
       color: #2c2c2e;
+      display: flex;
+      align-items: center;
+      margin-top: 2px; /* Move logo down slightly */
     }
 
     .logo img {
@@ -106,26 +117,28 @@
     .hero-images img {
       position: absolute;
       object-fit: cover;
-      /*border-radius: 50%;
-      border: 8px solid white;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);*/
+      background: transparent; /* Remove any background */
       transition: transform 0.3s ease;
     }
     /* Style untuk gambar Football (gambar pertama) */
     .hero-images img:first-child {
-      width: 380px;
-      height: 380px;
-      top: 120px;
-      left: -70px; /* Posisi kiri sedikit ke kiri */
+      width: 400px;
+      height: 400px;
+      top: 150px;
+      left: -200px; /* Posisi kiri sedikit ke kiri */
       z-index: 1;
+      background: transparent;
+      mix-blend-mode: normal; /* Ensure proper blending */
     }
     /* Style untuk gambar Basketball (gambar kedua) */
     .hero-images img:last-child {
-      width: 530px;
-      height: 530px;
+      width: 630px;
+      height: 630px;
       /*top: 0;*/
       right: 0;
       z-index: 2;
+      background: transparent;
+      mix-blend-mode: normal; /* Ensure proper blending */
     }
     .hero-images img:hover {
       transform: scale(1.05);
@@ -216,25 +229,6 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
-    footer {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 2rem;
-      font-size: 0.9rem;
-      background: #1e1e1f;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
-    .footer-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .footer-section a {
-      color: #bbb;
-      text-decoration: none;
-    }
     
     /* Responsive Design */
     @media (max-width: 1024px) {
@@ -246,7 +240,7 @@
       header.scrolled {
         width: 90%;
         max-width: 960px;
-        margin: 0 auto;
+        margin: 1rem auto; /* Margin tetap sama */
       }
     }
 
@@ -341,9 +335,9 @@
         <img src="{{ asset('img/Lapangin-Black.png') }}" alt="Lapangin Logo" style="height: 40px;">
     </div>
     <nav class="nav-center">
-      <a href="#">Book Now</a>
-      <a href="#">Features</a>
-      <a href="#">Contact</a>
+      <a href="#book-now" onclick="smoothScrollTo('book-now')">Book Now</a>
+      <a href="#features" onclick="smoothScrollTo('features')">Features</a>
+      <a href="#contact" onclick="smoothScrollTo('contact')">Contact</a>
     </nav>
     <div class="social-icons">
       <a href="#" title="Instagram">📷</a>
@@ -352,18 +346,18 @@
     </div>
   </header>
 
-  <section class="hero">
+  <section class="hero" id="book-now">
     <div class="hero-images">
       <img src="{{ asset('img/Football-Anime.png') }}" alt="Football" />
       <img src="{{ asset('img/Basketball-Anime.png') }}" alt="Basketball" />
     </div>
     <div class="hero-text">
-        <h1>Book Your Field. <br /><span style="color:#3b82f6">Reserve, play, and win.</span></h1>
+        <h1>Book Your Field. <br /><span style="color:#f59e0b">Reserve, play, and win.</span></h1>
         <a href="{{ url('/starting-page') }}">Get Started</a>
     </div>
   </section>
 
-  <section class="cards">
+  <section class="cards" id="features">
     <div class="card-container">
       <div class="card"></div>
       <div class="card-text">
@@ -393,34 +387,31 @@
     <a href="{{ url('/starting-page') }}">Book a field</a>
   </section>
 
-  <footer>
-    <div class="logo">
-        <img src="{{ asset('img/Lapangin-White.png') }}" alt="Lapangin Logo" style="height: 40px;">
-    </div>
-    <div class="footer-section">
-      <strong>Company</strong>
-      <a href="#">About</a>
-      <a href="#">Price</a>
-      <a href="#">Contact</a>
-    </div>
-    <div class="footer-section">
-      <strong>Support</strong>
-      <a href="#">FAQs</a>
-      <a href="#">Help Center</a>
-      <a href="#">Terms</a>
-    </div>
-    <div class="footer-section">
-      <strong>Company</strong>
-      <a href="#">Instagram</a>
-      <a href="#">Facebook</a>
-      <a href="#">Twitter</a>
-    </div>
-    <div class="footer-section">
-      <strong>Locations</strong>
-      <a href="#">Football Fields</a>
-      <a href="#">Tennis Courts</a>
-      <a href="#">Badminton Courts</a>
-    </div>
-  </footer>
+  <!-- Include Footer Component -->
+  @include('components.footer')
+
+  <script>
+    // Smooth scroll function
+    function smoothScrollTo(elementId) {
+      event.preventDefault(); // Prevent default anchor behavior
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+
+    // Add scroll effect to header (if needed for transparency)
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 100) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
 </body>
 </html>

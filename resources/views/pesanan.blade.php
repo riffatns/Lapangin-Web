@@ -89,6 +89,12 @@
       text-decoration: none;
       color: #999;
       font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
     
     .user-item:hover {
@@ -325,6 +331,16 @@
       background-color: #525252;
     }
     
+    .btn-success {
+      background-color: #059669;
+      color: white;
+      border: none;
+    }
+    
+    .btn-success:hover {
+      background-color: #047857;
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -380,7 +396,7 @@
       </a>
       <form action="{{ url('/logout') }}" method="POST" style="display: inline; width: 100%;">
         @csrf
-        <button type="submit" class="user-item" style="background: none; border: none; width: 100%; text-align: left;">
+        <button type="submit" class="user-item">
           <span class="icon">🚪</span>
           <span>Logout</span>
         </button>
@@ -465,25 +481,32 @@
                 </div>
                 <div class="detail-row">
                   <span>Total:</span>
-                  <span class="detail-value">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
+                  <span class="detail-value">Rp {{ number_format((float)$booking->total_price, 0, ',', '.') }}</span>
                 </div>
               </div>
               
               <div class="order-actions">
                 @if($booking->status == 'confirmed')
-                  <button class="action-btn btn-primary">Lihat Detail</button>
+                  <a href="{{ route('booking.detail', $booking->id) }}" class="action-btn btn-primary">Lihat Detail</a>
                   <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
                   </form>
                 @elseif($booking->status == 'pending')
-                  <button class="action-btn btn-primary">Bayar Sekarang</button>
+                  <a href="{{ route('booking.pay-now', $booking->id) }}" class="action-btn btn-primary">Bayar Sekarang</a>
                   <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
                   </form>
+                @elseif($booking->status == 'completed')
+                  <a href="{{ route('booking.detail', $booking->id) }}" class="action-btn btn-secondary">Lihat Detail</a>
+                  @if(!$booking->rating)
+                    <a href="{{ route('booking.rating', $booking->id) }}" class="action-btn btn-primary">Beri Rating</a>
+                  @else
+                    <span class="action-btn btn-success" style="background-color: #059669; cursor: default;">Rating Diberikan</span>
+                  @endif
                 @else
-                  <button class="action-btn btn-secondary">Lihat Detail</button>
+                  <a href="{{ route('booking.detail', $booking->id) }}" class="action-btn btn-secondary">Lihat Detail</a>
                 @endif
               </div>
             </div>
@@ -492,5 +515,51 @@
       @endif
     </div>
   </div>
+
+  <script>
+    // Filter functionality
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const orderCards = document.querySelectorAll('.order-card');
+    
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        filterTabs.forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        const filter = tab.textContent.toLowerCase();
+        
+        orderCards.forEach(card => {
+          const status = card.querySelector('.order-status').classList[1].replace('status-', '');
+          
+          if (filter === 'semua') {
+            card.style.display = 'block';
+          } else if (filter === 'upcoming' && (status === 'confirmed' || status === 'pending')) {
+            card.style.display = 'block';
+          } else if (filter === 'completed' && status === 'completed') {
+            card.style.display = 'block';
+          } else if (filter === 'cancelled' && status === 'cancelled') {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        
+        // Update empty state
+        const visibleCards = Array.from(orderCards).filter(card => card.style.display !== 'none');
+        const emptyState = document.querySelector('.empty-state');
+        const ordersGrid = document.querySelector('.orders-grid');
+        
+        if (visibleCards.length === 0 && emptyState) {
+          emptyState.style.display = 'flex';
+          if (ordersGrid) ordersGrid.style.display = 'none';
+        } else {
+          if (emptyState) emptyState.style.display = 'none';
+          if (ordersGrid) ordersGrid.style.display = 'grid';
+        }
+      });
+    });
+  </script>
 </body>
 </html>

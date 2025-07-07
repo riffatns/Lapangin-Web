@@ -16,9 +16,16 @@
       background-color: #2c2c2e;
       color: white;
       display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .main-content {
+      flex: 1;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      margin: 13rem;
     }
     .login-container {
       width: 100%;
@@ -100,39 +107,44 @@
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>Welcome back</h1>
-    <p class="subtitle">Sign in to your account</p>
-    
-    @if(session('error'))
-      <div class="error">{{ session('error') }}</div>
-    @endif
-    
-    @if(session('success'))
-      <div class="success">{{ session('success') }}</div>
-    @endif
-    
-    <form action="{{ url('/login') }}" method="POST">
-      @csrf
+  <div class="main-content">
+    <div class="login-container">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in to your account</p>
       
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" placeholder="jane@lapangin.com" value="{{ old('email') }}" required>
-      @error('email')
-        <div class="error">{{ $message }}</div>
-      @enderror
+      @if(session('error'))
+        <div class="error">{{ session('error') }}</div>
+      @endif
+      
+      @if(session('success'))
+        <div class="success">{{ session('success') }}</div>
+      @endif
+      
+      <form action="{{ url('/login') }}" method="POST">
+        @csrf
+        
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="jane@lapangin.com" value="{{ old('email') }}" required>
+        @error('email')
+          <div class="error">{{ $message }}</div>
+        @enderror
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" placeholder="Your password" required>
-      @error('password')
-        <div class="error">{{ $message }}</div>
-      @enderror
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Your password" required>
+        @error('password')
+          <div class="error">{{ $message }}</div>
+        @enderror
 
-      <button type="submit">Sign in</button>
-    </form>
-    
-    <div class="link">
-      <p>Don't have an account? <a href="{{ url('/register') }}">Register here</a></p>
+        <button type="submit">Sign in</button>
+      </form>
+      
+      <div class="link">
+        <p>Don't have an account? <a href="{{ url('/register') }}">Register here</a></p>
+      </div>
     </div>
   </div>
+
+  <!-- Include Footer Component -->
+  @include('components.footer')
 </body>
 </html>

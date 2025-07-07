@@ -158,4 +158,102 @@ class BookingController extends Controller
 
         return redirect()->route('booking.payment.success')->with('success', 'Pembayaran berhasil! Booking telah dikonfirmasi.');
     }
+
+    public function show($bookingId)
+    {
+        $booking = Auth::user()->bookings()
+            ->with(['venue.sport', 'payment'])
+            ->findOrFail($bookingId);
+
+        return view('booking-detail', compact('booking'));
+    }
+
+    public function payNow($bookingId)
+    {
+        $booking = Auth::user()->bookings()->findOrFail($bookingId);
+        
+        if ($booking->status !== 'pending') {
+            return redirect()->route('pesanan')->with('error', 'Booking tidak dalam status pending');
+        }
+
+        return redirect()->route('booking.checkout', $booking);
+    }
+
+    public function showRatingForm($bookingId)
+    {
+        $booking = Auth::user()->bookings()
+            ->with(['venue.sport'])
+            ->findOrFail($bookingId);
+        
+        if ($booking->status !== 'completed') {
+            return redirect()->route('pesanan')->with('error', 'Hanya booking yang sudah selesai yang dapat diberi rating');
+        }
+
+        if ($booking->rating) {
+            return redirect()->route('pesanan')->with('info', 'Anda sudah memberikan rating untuk booking ini');
+        }
+
+        return view('booking-rating', compact('booking'));
+    }
+
+    public function submitRating(Request $request, $bookingId)
+    {
+        $booking = Auth::user()->bookings()->findOrFail($bookingId);
+        
+        if ($booking->status !== 'completed') {
+            return redirect()->route('pesanan')->with('error', 'Hanya booking yang sudah selesai yang dapat diberi rating');
+        }
+
+        if ($booking->rating) {
+            return redirect()->route('pesanan')->with('error', 'Anda sudah memberikan rating untuk booking ini');
+        }
+
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'nullable|string|max:500'
+        ]);
+
+        // Update booking with rating
+        $booking->update([
+            'rating' => $request->rating,
+            'review' => $request->review
+        ]);
+
+        // Update venue rating
+        $venue = $booking->venue;
+        $totalRatings = $venue->bookings()->whereNotNull('rating')->count();
+        $averageRating = $venue->bookings()->whereNotNull('rating')->avg('rating');
+        
+        $venue->update([
+            'rating' => round($averageRating, 1),
+            'total_reviews' => $totalRatings
+        ]);
+
+        // Award points for rating
+        $userProfile = auth()->user()->profile;
+        if ($userProfile) {
+            $userProfile->increment('total_points', 5); // Award 5 points for rating
+        }
+
+        return redirect()->route('pesanan')->with('success', 'Rating berhasil diberikan! Terima kasih atas feedback Anda.');
+    }
+
+    public function markAsCompleted($bookingId)
+    {
+        $booking = Auth::user()->bookings()->findOrFail($bookingId);
+        
+        if ($booking->status !== 'confirmed') {
+            return redirect()->route('pesanan')->with('error', 'Booking tidak dalam status confirmed');
+        }
+
+        // Check if booking date has passed
+        $bookingDateTime = \Carbon\Carbon::parse($booking->booking_date . ' ' . $booking->end_time);
+        if ($bookingDateTime->isFuture()) {
+            return redirect()->route('pesanan')->with('error', 'Booking belum selesai, tidak dapat di-mark sebagai completed');
+        }
+
+        $booking->update(['status' => 'completed']);
+
+        return redirect()->route('pesanan')->with('success', 'Booking berhasil di-mark sebagai selesai');
+    }
 }

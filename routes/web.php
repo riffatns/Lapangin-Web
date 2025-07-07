@@ -47,6 +47,13 @@ Route::middleware('auth')->group(function () {
     })->name('booking.payment.success');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
     
+    // New booking action routes
+    Route::get('/booking/{booking}/detail', [BookingController::class, 'show'])->name('booking.detail');
+    Route::get('/booking/{booking}/pay-now', [BookingController::class, 'payNow'])->name('booking.pay-now');
+    Route::get('/booking/{booking}/rating', [BookingController::class, 'showRatingForm'])->name('booking.rating');
+    Route::post('/booking/{booking}/rating', [BookingController::class, 'submitRating'])->name('booking.rating.submit');
+    Route::post('/booking/{booking}/complete', [BookingController::class, 'markAsCompleted'])->name('booking.complete');
+    
     Route::get('/komunitas', [CommunityController::class, 'index'])->name('komunitas');
 
     Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifikasi');

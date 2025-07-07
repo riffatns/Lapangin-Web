@@ -196,13 +196,56 @@
       gap: 1rem;
     }
     
+    .btn-primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 1rem 2rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+    }
+    
     /* Venue Gallery */
     .venue-gallery {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 1.5rem;
-      height: 100%;
-      max-height: 450px;
+      height: 450px;
     }
     
     .main-image {
@@ -210,7 +253,8 @@
       border-radius: 20px;
       position: relative;
       overflow: hidden;
-      min-height: 350px;
+      width: 100%;
+      height: 450px;
       border: 3px solid rgba(255, 255, 255, 0.15);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
       transition: all 0.3s ease;
@@ -280,7 +324,8 @@
       color: #9ca3af;
       transition: all 0.3s ease;
       cursor: pointer;
-      min-height: 100px;
+      width: 100%;
+      height: 140px;
       border: 2px solid rgba(255, 255, 255, 0.1);
       overflow: hidden;
       position: relative;
@@ -307,219 +352,6 @@
     .thumb-image span {
       font-weight: 700;
       font-size: 1.1rem;
-    }
-      min-height: 400px;
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-      overflow: hidden;
-    }
-    
-    .hero-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><rect width="1000" height="1000" fill="%23111827"/><polygon fill="%23374151" points="0,1000 1000,800 1000,1000"/><polygon fill="%23f59e0b" opacity="0.1" points="0,600 500,400 1000,600 1000,800 0,1000"/></svg>') center/cover;
-    }
-    
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-      height: 100%;
-      display: flex;
-      align-items: flex-start;
-      padding-top: 0;
-    }
-    
-    .hero-info {
-      flex: 1;
-      max-width: 600px;
-    }
-    
-    .venue-badge {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .venue-title {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, #fff, #ccc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .venue-subtitle {
-      font-size: 1.2rem;
-      color: #9ca3af;
-      margin-bottom: 2rem;
-    }
-    
-    .venue-stats {
-      display: flex;
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
-    
-    .stat-item {
-      text-align: center;
-    }
-    
-    .stat-number {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #f59e0b;
-    }
-    
-    .stat-label {
-      font-size: 0.9rem;
-      color: #9ca3af;
-    }
-    
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
-    }
-    
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 1rem 2rem;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      backdrop-filter: blur(10px);
-    }
-    
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
-    }
-      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
-    }
-    
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 1rem 2rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-    }
-    
-    /* Image Gallery */
-    .gallery-section {
-      position: absolute;
-      right: 2rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 400px;
-      height: 300px;
-    }
-    
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 0.5rem;
-      height: 100%;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    
-    .gallery-main {
-      grid-row: 1 / -1;
-      background: linear-gradient(45deg, #374151, #4b5563);
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .gallery-thumb {
-      background: linear-gradient(45deg, #6b7280, #9ca3af);
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .gallery-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.8));
-      padding: 1rem;
-      color: white;
-    }
-    
-    .gallery-more {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    
-    .gallery-more:hover {
-      background: rgba(0,0,0,0.4);
     }
     
     /* Content Sections */
@@ -1029,13 +861,13 @@
         grid-template-columns: 1fr;
         grid-template-rows: 350px auto;
         gap: 1.5rem;
-        max-height: none;
+        height: auto;
       }
       
       .gallery-thumbs {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: 1fr;
-        max-height: 120px;
+        height: 120px;
       }
       
       .content-grid {
@@ -1104,20 +936,21 @@
       
       .venue-gallery {
         grid-template-rows: 280px auto;
+        height: auto;
       }
       
       .gallery-thumbs {
         grid-template-columns: repeat(3, 1fr);
-        max-height: 100px;
+        height: 100px;
       }
       
       .thumb-image {
-        min-height: 80px;
+        height: 80px;
         font-size: 1rem;
       }
       
       .main-image {
-        min-height: 250px;
+        height: 250px;
       }
 
       /* Mobile Booking Card Optimization */

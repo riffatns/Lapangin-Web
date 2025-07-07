@@ -96,6 +96,12 @@
       text-decoration: none;
       color: #999;
       font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
     
     .user-item:hover {
@@ -231,15 +237,6 @@
       background: linear-gradient(135deg, #f59e0b, #d97706);
       position: relative;
       overflow: hidden;
-    }
-    
-    .card-image img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
     
     .card-image.badminton {
@@ -440,7 +437,8 @@
             <div class="card-image {{ strtolower($venue->sport->name) }}">
               @if($venue->main_image)
                 <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
-                     alt="{{ $venue->name }}">
+                     alt="{{ $venue->name }}" 
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px 12px 0 0;">
               @endif
               <div class="location-badge">📍 {{ $venue->location }}</div>
             </div>
