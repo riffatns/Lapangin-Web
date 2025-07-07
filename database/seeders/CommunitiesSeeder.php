@@ -70,27 +70,38 @@ class CommunitiesSeeder extends Seeder
         ];
 
         foreach ($communities as $communityData) {
-            $community = Community::create($communityData);
+            $community = Community::updateOrCreate(
+                ['slug' => $communityData['slug']], // Find by slug
+                $communityData // Update or create with this data
+            );
 
-            // Add creator as admin
-            CommunityMember::create([
-                'community_id' => $community->id,
-                'user_id' => $community->creator_id,
-                'role' => 'admin',
-                'joined_at' => now(),
-                'is_active' => true
-            ]);
+            // Add creator as admin if not already exists
+            CommunityMember::updateOrCreate(
+                [
+                    'community_id' => $community->id,
+                    'user_id' => $community->creator_id
+                ],
+                [
+                    'role' => 'admin',
+                    'joined_at' => now(),
+                    'is_active' => true
+                ]
+            );
 
             // Add some sample members
             $sampleMembers = User::where('id', '!=', $community->creator_id)->take(3)->get();
             foreach ($sampleMembers as $member) {
-                CommunityMember::create([
-                    'community_id' => $community->id,
-                    'user_id' => $member->id,
-                    'role' => 'member',
-                    'joined_at' => now()->subDays(rand(1, 30)),
-                    'is_active' => true
-                ]);
+                CommunityMember::updateOrCreate(
+                    [
+                        'community_id' => $community->id,
+                        'user_id' => $member->id
+                    ],
+                    [
+                        'role' => 'member',
+                        'joined_at' => now()->subDays(rand(1, 30)),
+                        'is_active' => true
+                    ]
+                );
             }
         }
     }

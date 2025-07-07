@@ -29,26 +29,28 @@ class UserProfilesSeeder extends Seeder
         );
 
         // Create user profile
-        UserProfile::create([
-            'user_id' => $user->id,
-            'phone' => '+62 812-3456-7890',
-            'birthdate' => '1995-05-15',
-            'city' => 'bandung',
-            'district' => 'Coblong',
-            'address' => 'Jl. Ganesha No. 10, Bandung',
-            'favorite_sport' => 'badminton',
-            'skill_level' => 'intermediate',
-            'bio' => 'Seorang enthusiast badminton yang senang bermain dan berkompetisi. Aktif di komunitas olahraga Bandung.',
-            'total_bookings' => 12,
-            'total_points' => 1250,
-            'ranking' => 25,
-            'notification_preferences' => [
-                'booking' => true,
-                'community' => true,
-                'promo' => false,
-                'newsletter' => true
+        UserProfile::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'phone' => '+62 812-3456-7890',
+                'birthdate' => '1995-05-15',
+                'city' => 'bandung',
+                'district' => 'Coblong',
+                'address' => 'Jl. Ganesha No. 10, Bandung',
+                'favorite_sport' => 'badminton',
+                'skill_level' => 'intermediate',
+                'bio' => 'Seorang enthusiast badminton yang senang bermain dan berkompetisi. Aktif di komunitas olahraga Bandung.',
+                'total_bookings' => 12,
+                'total_points' => 1250,
+                'ranking' => 25,
+                'notification_preferences' => [
+                    'booking' => true,
+                    'community' => true,
+                    'promo' => false,
+                    'newsletter' => true
+                ]
             ]
-        ]);
+        );
 
         // Create additional sample users
         $sampleUsers = [
@@ -82,33 +84,37 @@ class UserProfilesSeeder extends Seeder
         ];
 
         foreach ($sampleUsers as $userData) {
-            $user = User::create([
-                'name' => $userData['name'],
-                'email' => $userData['email'],
-                'password' => Hash::make('password'),
-                'phone' => '+62 812-' . rand(1000, 9999) . '-' . rand(1000, 9999),
-                'role' => 'user',
-                'is_active' => true,
-                'email_verified_at' => now()
-            ]);
-
-            UserProfile::create([
-                'user_id' => $user->id,
-                'phone' => $user->phone,
-                'city' => 'bandung',
-                'favorite_sport' => $userData['favorite_sport'],
-                'skill_level' => $userData['skill_level'],
-                'bio' => 'Passionate sports enthusiast who loves playing ' . $userData['favorite_sport'],
-                'total_bookings' => $userData['total_bookings'],
-                'total_points' => $userData['total_points'],
-                'ranking' => $userData['ranking'],
-                'notification_preferences' => [
-                    'booking' => true,
-                    'community' => true,
-                    'promo' => true,
-                    'newsletter' => true
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => Hash::make('password'),
+                    'phone' => '+62 812-' . rand(1000, 9999) . '-' . rand(1000, 9999),
+                    'role' => 'user',
+                    'is_active' => true,
+                    'email_verified_at' => now()
                 ]
-            ]);
+            );
+
+            UserProfile::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'phone' => $user->phone,
+                    'city' => 'bandung',
+                    'favorite_sport' => $userData['favorite_sport'],
+                    'skill_level' => $userData['skill_level'],
+                    'bio' => 'Passionate sports enthusiast who loves playing ' . $userData['favorite_sport'],
+                    'total_bookings' => $userData['total_bookings'],
+                    'total_points' => $userData['total_points'],
+                    'ranking' => $userData['ranking'],
+                    'notification_preferences' => [
+                        'booking' => true,
+                        'community' => true,
+                        'promo' => true,
+                        'newsletter' => true
+                    ]
+                ]
+            );
         }
     }
 }

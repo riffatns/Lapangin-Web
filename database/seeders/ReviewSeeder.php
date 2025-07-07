@@ -79,8 +79,13 @@ class ReviewSeeder extends Seeder
                 // Create a completed booking from the past
                 $bookingDate = Carbon::now()->subDays(rand(1, 60));
                 
+                // Generate unique booking code
+                do {
+                    $bookingCode = 'BK' . time() . rand(1000, 9999);
+                } while (Booking::where('booking_code', $bookingCode)->exists());
+                
                 $booking = Booking::create([
-                    'booking_code' => 'BK' . now()->timestamp . rand(100, 999),
+                    'booking_code' => $bookingCode,
                     'user_id' => $user->id,
                     'venue_id' => $venue->id,
                     'booking_date' => $bookingDate->format('Y-m-d'),

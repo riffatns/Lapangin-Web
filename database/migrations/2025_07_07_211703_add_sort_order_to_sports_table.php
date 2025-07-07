@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('communities', function (Blueprint $table) {
-            // Add any new columns or modifications here
-            // This migration is for updating the communities table with new features
+        Schema::table('sports', function (Blueprint $table) {
+            $table->integer('sort_order')->default(0)->after('description');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('communities', function (Blueprint $table) {
-            // Rollback any changes made in the up() method
+        Schema::table('sports', function (Blueprint $table) {
+            $table->dropColumn('sort_order');
         });
     }
 };

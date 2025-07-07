@@ -11,21 +11,138 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user()->load('profile');
         $userProfile = $user->profile;
 
-        // Get popular venues
-        $venues = Venue::with('sport')
-            ->where('venues.is_active', true)
-            ->orderBy('rating', 'desc')
-            ->orderBy('total_reviews', 'desc')
-            ->take(6)
+        // Get filter parameters
+        $sportFilter = $request->get('sport', 'all');
+        $locationFilter = $request->get('location', 'all');
+        $distanceFilter = $request->get('distance', 'all');
+        $search = $request->get('search');
+
+        // Base query for venues
+        $venuesQuery = Venue::with('sport')
+            ->where('venues.is_active', true);
+
+        // Apply sport filter
+        if ($sportFilter !== 'all') {
+            if ($sportFilter === 'other-sports') {
+                // Show sports that are not in the main tabs (sort_order > 4)
+                $venuesQuery->whereHas('sport', function($query) {
+                    $query->where('sort_order', '>', 4);
+                });
+            } else {
+                $venuesQuery->whereHas('sport', function($query) use ($sportFilter) {
+                    $query->where('slug', $sportFilter);
+                });
+            }
+        }
+
+        // Apply location filter
+        if ($locationFilter !== 'all') {
+            $venuesQuery->where('city', 'like', '%' . $locationFilter . '%');
+        }
+
+        // Apply search filter
+        if ($search) {
+            $venuesQuery->where(function($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('location', 'like', '%' . $search . '%')
+                      ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Base ordering - start with rating and reviews
+        $venues = $venuesQuery->orderBy('rating', 'desc')
+            ->orderBy('total_reviews', 'desc');
+
+        // Apply distance filter with improved logic
+        if ($distanceFilter !== 'all') {
+            switch ($distanceFilter) {
+                case 'nearby':
+                    // Premium venues with high ratings and good reviews (simulating nearby popular places)
+                    $venues = $venues->where('rating', '>=', 4.5)
+                                   ->where('total_reviews', '>=', 20);
+                    break;
+                case 'medium':
+                    // Good venues that are accessible
+                    $venues = $venues->where('rating', '>=', 4.0)
+                                   ->where('rating', '<', 4.5);
+                    break;
+                case 'far':
+                    // All venues including budget-friendly options
+                    $venues = $venues->orderBy('price_per_hour', 'asc');
+                    break;
+            }
+        }
+
+        // Get total count before applying limits
+        $totalCount = $venues->count();
+        
+        // Show more venues on dashboard, with some randomization for variety
+        $showCount = min(18, $totalCount); // Show up to 18 venues
+        
+        // Add some randomization when no specific filters are applied
+        if ($sportFilter === 'all' && $locationFilter === 'all' && $distanceFilter === 'all' && !$search) {
+            // Occasionally shuffle results to show variety (30% chance)
+            $shouldShuffle = rand(1, 100) <= 30;
+            
+            if ($shouldShuffle && $totalCount > $showCount) {
+                // Get random venues for variety
+                $venues = $venues->inRandomOrder()->take($showCount)->get();
+            } else {
+                // Show top rated venues
+                $venues = $venues->take($showCount)->get();
+            }
+        } else {
+            // When filters are applied, show relevant results
+            $venues = $venues->take($showCount)->get();
+        }
+
+        // Get sports for filter - only show main sports (sort_order <= 4) as individual tabs
+        $mainSports = Sport::where('is_active', true)
+            ->where('sort_order', '<=', 4)
+            ->orderBy('sort_order')
             ->get();
 
-        // Get sports
-        $sports = Sport::where('sports.is_active', true)->get();
+        // Check if there are any "other sports" (sort_order > 4)
+        $hasOtherSports = Sport::where('is_active', true)
+            ->where('sort_order', '>', 4)
+            ->exists();
+
+        // Get unique cities for location filter
+        $cities = Venue::select('city')
+            ->where('is_active', true)
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        // Get active filters for summary
+        $activeFilters = [];
+        if ($sportFilter !== 'all') {
+            if ($sportFilter === 'other-sports') {
+                $activeFilters[] = ['type' => 'sport', 'value' => $sportFilter, 'label' => 'Other Sports'];
+            } else {
+                $sport = Sport::where('slug', $sportFilter)->first();
+                $activeFilters[] = ['type' => 'sport', 'value' => $sportFilter, 'label' => $sport ? $sport->name : $sportFilter];
+            }
+        }
+        if ($locationFilter !== 'all') {
+            $activeFilters[] = ['type' => 'location', 'value' => $locationFilter, 'label' => $locationFilter];
+        }
+        if ($distanceFilter !== 'all') {
+            $distanceLabels = [
+                'nearby' => 'Premium & Terdekat',
+                'medium' => 'Jarak Menengah',
+                'far' => 'Budget Friendly'
+            ];
+            $activeFilters[] = ['type' => 'distance', 'value' => $distanceFilter, 'label' => $distanceLabels[$distanceFilter]];
+        }
+        if ($search) {
+            $activeFilters[] = ['type' => 'search', 'value' => $search, 'label' => 'Search: "' . $search . '"'];
+        }
 
         // Get popular communities
         $popularCommunities = Community::with('sport', 'creator')
@@ -52,11 +169,18 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'venues', 
-            'sports', 
+            'mainSports',
+            'hasOtherSports',
+            'cities',
             'popularCommunities', 
             'recentBookings',
             'stats',
-            'user'
+            'user',
+            'sportFilter',
+            'locationFilter',
+            'distanceFilter',
+            'search',
+            'activeFilters'
         ));
     }
 

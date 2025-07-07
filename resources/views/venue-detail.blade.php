@@ -1083,7 +1083,7 @@
             @endif
           </div>
           <div class="gallery-thumbs">
-            @if($venue->gallery_images && count($venue->gallery_images) > 0)
+            @if($venue->gallery_images_count > 0)
               @foreach($venue->gallery_images as $index => $image)
                 @if($index < 2)
                   <div class="thumb-image">
@@ -1092,12 +1092,12 @@
                   </div>
                 @endif
               @endforeach
-              @if(count($venue->gallery_images) > 2)
+              @if($venue->gallery_images_count > 2)
                 <div class="thumb-image">
-                  <span>+{{ count($venue->gallery_images) - 2 }} more</span>
+                  <span>+{{ $venue->gallery_images_count - 2 }} more</span>
                 </div>
-              @elseif(count($venue->gallery_images) < 3)
-                @for($i = count($venue->gallery_images); $i < 3; $i++)
+              @elseif($venue->gallery_images_count < 3)
+                @for($i = $venue->gallery_images_count; $i < 3; $i++)
                   <div class="thumb-image">📸</div>
                 @endfor
               @endif

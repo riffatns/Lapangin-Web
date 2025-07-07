@@ -171,10 +171,51 @@
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s ease;
+      position: relative;
     }
     
     .location-filter:hover {
       background-color: #525252;
+    }
+
+    .filter-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #2c2c2e;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .filter-dropdown.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: white;
+      border-bottom: 1px solid #404040;
+    }
+
+    .dropdown-item:hover {
+      background-color: #404040;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item.selected {
+      background-color: #f59e0b;
+      color: white;
     }
     
     .search-bar {
@@ -194,6 +235,73 @@
     
     .search-bar input::placeholder {
       color: #999;
+    }
+    
+    /* Filter Summary Bar */
+    .filter-summary {
+      background-color: #2c2c2e;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #404040;
+      display: none;
+    }
+    
+    .filter-summary.active {
+      display: block;
+    }
+    
+    .filter-summary-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-summary-label {
+      color: #999;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .filter-tag {
+      background-color: #f59e0b;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .filter-tag .remove-filter {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+      margin: 0;
+      opacity: 0.8;
+    }
+    
+    .filter-tag .remove-filter:hover {
+      opacity: 1;
+    }
+    
+    .clear-all-filters {
+      background-color: #404040;
+      color: white;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    
+    .clear-all-filters:hover {
+      background-color: #525252;
     }
     
     /* Content Area */
@@ -398,21 +506,65 @@
     <!-- Header with filters -->
     <div class="header">
       <div class="filter-tabs">
-        <button class="filter-tab active">All</button>
-        <button class="filter-tab">Badminton</button>
-        <button class="filter-tab">Mini Soccer</button>
-        <button class="filter-tab">Tennis</button>
-        <button class="filter-tab">Futsal</button>
-        <button class="filter-tab">Other Sports</button>
+        <button class="filter-tab {{ $sportFilter === 'all' ? 'active' : '' }}" data-sport="all">All</button>
+        @foreach($mainSports as $sport)
+          <button class="filter-tab {{ $sportFilter === $sport->slug ? 'active' : '' }}" data-sport="{{ $sport->slug }}">{{ $sport->name }}</button>
+        @endforeach
+        @if($hasOtherSports)
+          <button class="filter-tab {{ $sportFilter === 'other-sports' ? 'active' : '' }}" data-sport="other-sports">Other Sports</button>
+        @endif
       </div>
       
       <div class="location-filters">
-        <button class="location-filter">Jarak ↕</button>
-        <button class="location-filter">Lokasi ↕</button>
+        <div class="location-filter" style="position: relative;">
+          <span id="distance-selected">
+            @if($distanceFilter === 'all') Jarak ↕
+            @elseif($distanceFilter === 'nearby') Premium & Terdekat
+            @elseif($distanceFilter === 'medium') Jarak Menengah
+            @elseif($distanceFilter === 'far') Budget Friendly
+            @endif
+          </span>
+          <div class="filter-dropdown" id="distance-dropdown">
+            <div class="dropdown-item {{ $distanceFilter === 'all' ? 'selected' : '' }}" data-distance="all">Semua Jarak</div>
+            <div class="dropdown-item {{ $distanceFilter === 'nearby' ? 'selected' : '' }}" data-distance="nearby">Premium & Terdekat</div>
+            <div class="dropdown-item {{ $distanceFilter === 'medium' ? 'selected' : '' }}" data-distance="medium">Jarak Menengah</div>
+            <div class="dropdown-item {{ $distanceFilter === 'far' ? 'selected' : '' }}" data-distance="far">Budget Friendly</div>
+          </div>
+        </div>
+        
+        <div class="location-filter" style="position: relative;">
+          <span id="location-selected">
+            @if($locationFilter === 'all') Lokasi ↕
+            @else {{ $locationFilter }}
+            @endif
+          </span>
+          <div class="filter-dropdown" id="location-dropdown">
+            <div class="dropdown-item {{ $locationFilter === 'all' ? 'selected' : '' }}" data-location="all">Semua Lokasi</div>
+            @foreach($cities as $city)
+              <div class="dropdown-item {{ $locationFilter === $city ? 'selected' : '' }}" data-location="{{ $city }}">{{ $city }}</div>
+            @endforeach
+          </div>
+        </div>
       </div>
       
       <div class="search-bar">
-        <input type="text" placeholder="Search...">
+        <input type="text" placeholder="Search..." id="search-input" value="{{ $search }}">
+      </div>
+    </div>
+
+    <!-- Filter Summary Bar -->
+    <div class="filter-summary {{ count($activeFilters) > 0 ? 'active' : '' }}">
+      <div class="filter-summary-content">
+        <span class="filter-summary-label">Active Filters:</span>
+        @foreach($activeFilters as $filter)
+          <div class="filter-tag">
+            <span>{{ $filter['label'] }}</span>
+            <button class="remove-filter" data-filter-type="{{ $filter['type'] }}" data-filter-value="{{ $filter['value'] }}">×</button>
+          </div>
+        @endforeach
+        @if(count($activeFilters) > 1)
+          <button class="clear-all-filters" id="clear-all-filters">Remove All</button>
+        @endif
       </div>
     </div>
 
@@ -445,11 +597,11 @@
             <div class="card-content">
               <h3 class="card-title">{{ $venue->name }}</h3>
               <div class="card-rating">
-                <span class="stars">⭐ {{ number_format($venue->rating, 1) }}</span>
+                <span class="stars">⭐ {{ number_format((float)$venue->rating, 1) }}</span>
                 <span class="rating-text">({{ $venue->total_reviews }})</span>
               </div>
               <div class="card-price">
-                Mulai <span class="price-highlight">Rp {{ number_format($venue->price_per_hour, 0, ',', '.') }}</span>/jam
+                Mulai <span class="price-highlight">Rp {{ number_format((float)$venue->price_per_hour, 0, ',', '.') }}</span>/jam
               </div>
             </div>
           </div>
@@ -458,5 +610,153 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sport filter tabs
+      const sportTabs = document.querySelectorAll('.filter-tab');
+      sportTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const sport = this.getAttribute('data-sport');
+          updateFilters('sport', sport);
+        });
+      });
+
+      // Distance dropdown
+      const distanceFilter = document.querySelector('#distance-dropdown').parentElement;
+      const distanceDropdown = document.querySelector('#distance-dropdown');
+      
+      distanceFilter.addEventListener('click', function(e) {
+        e.stopPropagation();
+        distanceDropdown.classList.toggle('show');
+        document.querySelector('#location-dropdown').classList.remove('show');
+      });
+
+      const distanceItems = document.querySelectorAll('#distance-dropdown .dropdown-item');
+      distanceItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const distance = this.getAttribute('data-distance');
+          const text = this.textContent;
+          document.querySelector('#distance-selected').textContent = text;
+          distanceDropdown.classList.remove('show');
+          updateFilters('distance', distance);
+        });
+      });
+
+      // Location dropdown
+      const locationFilter = document.querySelector('#location-dropdown').parentElement;
+      const locationDropdown = document.querySelector('#location-dropdown');
+      
+      locationFilter.addEventListener('click', function(e) {
+        e.stopPropagation();
+        locationDropdown.classList.toggle('show');
+        document.querySelector('#distance-dropdown').classList.remove('show');
+      });
+
+      const locationItems = document.querySelectorAll('#location-dropdown .dropdown-item');
+      locationItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const location = this.getAttribute('data-location');
+          const text = this.textContent;
+          document.querySelector('#location-selected').textContent = text;
+          locationDropdown.classList.remove('show');
+          updateFilters('location', location);
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.querySelector('#search-input');
+      let searchTimeout;
+      
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          updateFilters('search', this.value);
+        }, 500); // Debounce search
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function() {
+        document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
+          dropdown.classList.remove('show');
+        });
+      });
+
+      // Filter summary functionality
+      const removeFilterButtons = document.querySelectorAll('.remove-filter');
+      removeFilterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const filterType = this.getAttribute('data-filter-type');
+          const filterValue = this.getAttribute('data-filter-value');
+          removeFilter(filterType);
+        });
+      });
+
+      const clearAllButton = document.getElementById('clear-all-filters');
+      if (clearAllButton) {
+        clearAllButton.addEventListener('click', function() {
+          clearAllFilters();
+        });
+      }
+
+      // Remove filter function
+      function removeFilter(filterType) {
+        const url = new URL(window.location);
+        url.searchParams.delete(filterType);
+        
+        // Add loading state
+        document.querySelector('.cards-grid').style.opacity = '0.5';
+        
+        // Navigate to new URL
+        window.location.href = url.toString();
+      }
+
+      // Clear all filters function
+      function clearAllFilters() {
+        const url = new URL(window.location);
+        url.searchParams.delete('sport');
+        url.searchParams.delete('location');
+        url.searchParams.delete('distance');
+        url.searchParams.delete('search');
+        
+        // Add loading state
+        document.querySelector('.cards-grid').style.opacity = '0.5';
+        
+        // Navigate to new URL
+        window.location.href = url.toString();
+      }
+
+      // Update filters function
+      function updateFilters(filterType, value) {
+        const url = new URL(window.location);
+        
+        if (value === 'all' || value === '') {
+          url.searchParams.delete(filterType);
+        } else {
+          url.searchParams.set(filterType, value);
+        }
+        
+        // Add loading state
+        document.querySelector('.cards-grid').style.opacity = '0.5';
+        
+        // Navigate to new URL
+        window.location.href = url.toString();
+      }
+
+      // Smooth loading animation
+      const cards = document.querySelectorAll('.field-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
+  </script>
 </body>
 </html>
