@@ -35,6 +35,7 @@
           <li><a href="#">Futsal</a></li>
           <li><a href="#">Basketball</a></li>
           <li><a href="#">Tennis</a></li>
+          <li><a href="#">Other Sports</a></li>
         </ul>
       </div>
 

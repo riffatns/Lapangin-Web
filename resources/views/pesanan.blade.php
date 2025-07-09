@@ -269,6 +269,17 @@
       color: #34d399;
     }
     
+    .status-on_going {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
     .status-completed {
       background-color: rgba(16, 185, 129, 0.2);
       color: #34d399;
@@ -448,16 +459,21 @@
         <!-- Orders Grid -->
         <div class="orders-grid">
           @foreach($bookings as $booking)
+            @php
+              $currentStatus = $booking->getCurrentStatus();
+            @endphp
             <div class="order-card">
               <div class="order-header">
                 <div>
                   <h3 class="order-title">{{ $booking->venue->name }}</h3>
-                  <div class="order-status status-{{ $booking->status }}">
-                    @if($booking->status == 'pending')
+                  <div class="order-status status-{{ $currentStatus }}">
+                    @if($currentStatus == 'pending')
                       Menunggu Pembayaran
-                    @elseif($booking->status == 'confirmed')
-                      Dikonfirmasi
-                    @elseif($booking->status == 'completed')
+                    @elseif($currentStatus == 'confirmed')
+                      Mendatang
+                    @elseif($currentStatus == 'on_going')
+                      Sedang Berlangsung
+                    @elseif($currentStatus == 'completed')
                       Selesai
                     @else
                       Dibatalkan
@@ -469,11 +485,11 @@
               <div class="order-details">
                 <div class="detail-row">
                   <span>Tanggal:</span>
-                  <span class="detail-value">{{ $booking->booking_date->format('d M Y') }}</span>
+                  <span class="detail-value">{{ $booking->getBookingDateFormatted() }}</span>
                 </div>
                 <div class="detail-row">
                   <span>Waktu:</span>
-                  <span class="detail-value">{{ $booking->start_time }} - {{ $booking->end_time }}</span>
+                  <span class="detail-value">{{ $booking->getTimeRangeFormatted() }}</span>
                 </div>
                 <div class="detail-row">
                   <span>Durasi:</span>
@@ -486,19 +502,21 @@
               </div>
               
               <div class="order-actions">
-                @if($booking->status == 'confirmed')
+                @if($currentStatus == 'confirmed' || $currentStatus == 'on_going')
                   <a href="{{ route('booking.detail', $booking->id) }}" class="action-btn btn-primary">Lihat Detail</a>
-                  <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
-                  </form>
-                @elseif($booking->status == 'pending')
+                  @if($currentStatus == 'confirmed')
+                    <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
+                      @csrf
+                      <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
+                    </form>
+                  @endif
+                @elseif($currentStatus == 'pending')
                   <a href="{{ route('booking.pay-now', $booking->id) }}" class="action-btn btn-primary">Bayar Sekarang</a>
                   <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Yakin ingin membatalkan booking ini?')">Batalkan</button>
                   </form>
-                @elseif($booking->status == 'completed')
+                @elseif($currentStatus == 'completed')
                   <a href="{{ route('booking.detail', $booking->id) }}" class="action-btn btn-secondary">Lihat Detail</a>
                   @if(!$booking->rating)
                     <a href="{{ route('booking.rating', $booking->id) }}" class="action-btn btn-primary">Beri Rating</a>
@@ -535,7 +553,7 @@
           
           if (filter === 'semua') {
             card.style.display = 'block';
-          } else if (filter === 'upcoming' && (status === 'confirmed' || status === 'pending')) {
+          } else if (filter === 'upcoming' && (status === 'confirmed' || status === 'pending' || status === 'on_going')) {
             card.style.display = 'block';
           } else if (filter === 'completed' && status === 'completed') {
             card.style.display = 'block';

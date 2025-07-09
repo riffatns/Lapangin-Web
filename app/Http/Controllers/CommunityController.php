@@ -8,6 +8,8 @@ use App\Models\Sport;
 use App\Models\CommunityMember;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Models\PlayTogether;
+use App\Models\Tournament;
 use Illuminate\Support\Facades\Auth;
 
 class CommunityController extends Controller
@@ -83,6 +85,34 @@ class CommunityController extends Controller
                 ];
             });
 
+        // Get PlayTogether sessions for "Main Bareng" tab
+        $playTogethers = PlayTogether::with(['sport', 'creator'])
+            ->upcoming()
+            ->public()
+            ->orderBy('scheduled_time', 'asc')
+            ->get()
+            ->map(function($playTogether) use ($user) {
+                $playTogether->is_participant = $playTogether->participants()
+                    ->where('user_id', $user->id)
+                    ->where('status', 'joined')
+                    ->exists();
+                return $playTogether;
+            });
+
+        // Get Tournaments for "Tournament" tab
+        $tournaments = Tournament::with(['sport', 'creator'])
+            ->upcoming()
+            ->public()
+            ->orderBy('registration_deadline', 'asc')
+            ->get()
+            ->map(function($tournament) use ($user) {
+                $tournament->is_participant = $tournament->participants()
+                    ->where('user_id', $user->id)
+                    ->where('status', 'registered')
+                    ->exists();
+                return $tournament;
+            });
+
         return view('komunitas', compact(
             'userCommunities',
             'popularCommunities', 
@@ -91,7 +121,9 @@ class CommunityController extends Controller
             'communities',
             'user',
             'userStats',
-            'topPlayers'
+            'topPlayers',
+            'playTogethers',
+            'tournaments'
         ));
     }
 
@@ -148,6 +180,60 @@ class CommunityController extends Controller
         $community->decrement('total_members');
 
         return redirect()->back()->with('success', 'Berhasil keluar dari komunitas ' . $community->name);
+    }
+
+    // PlayTogether methods
+    public function joinPlayTogether(PlayTogether $playTogether)
+    {
+        $user = Auth::user();
+
+        if (!$playTogether->canJoin($user)) {
+            return redirect()->back()->with('error', 'Tidak dapat bergabung dalam sesi main bareng ini');
+        }
+
+        if ($playTogether->addParticipant($user)) {
+            return redirect()->back()->with('success', 'Berhasil bergabung dalam sesi main bareng: ' . $playTogether->title);
+        }
+
+        return redirect()->back()->with('error', 'Gagal bergabung dalam sesi main bareng');
+    }
+
+    public function leavePlayTogether(PlayTogether $playTogether)
+    {
+        $user = Auth::user();
+
+        if ($playTogether->removeParticipant($user)) {
+            return redirect()->back()->with('success', 'Berhasil keluar dari sesi main bareng: ' . $playTogether->title);
+        }
+
+        return redirect()->back()->with('error', 'Gagal keluar dari sesi main bareng');
+    }
+
+    // Tournament methods
+    public function registerTournament(Tournament $tournament)
+    {
+        $user = Auth::user();
+
+        if (!$tournament->canRegister($user)) {
+            return redirect()->back()->with('error', 'Tidak dapat mendaftar turnamen ini');
+        }
+
+        if ($tournament->registerParticipant($user)) {
+            return redirect()->back()->with('success', 'Berhasil mendaftar turnamen: ' . $tournament->title);
+        }
+
+        return redirect()->back()->with('error', 'Gagal mendaftar turnamen');
+    }
+
+    public function unregisterTournament(Tournament $tournament)
+    {
+        $user = Auth::user();
+
+        if ($tournament->unregisterParticipant($user)) {
+            return redirect()->back()->with('success', 'Berhasil batal dari turnamen: ' . $tournament->title);
+        }
+
+        return redirect()->back()->with('error', 'Gagal batal dari turnamen');
     }
 }
 

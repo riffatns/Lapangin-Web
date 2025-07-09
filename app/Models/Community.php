@@ -51,4 +51,16 @@ class Community extends Model
     {
         return $this->hasMany(CommunityMember::class);
     }
+
+    // PlayTogether relationships
+    public function organizedPlayTogethers()
+    {
+        return $this->morphMany(PlayTogether::class, 'organizer');
+    }
+
+    // Tournament relationships
+    public function organizedTournaments()
+    {
+        return $this->morphMany(Tournament::class, 'organizer');
+    }
 }

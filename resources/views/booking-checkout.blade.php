@@ -593,22 +593,34 @@
           <!-- Venue Info -->
           <div class="venue-info">
             <div class="venue-image">
-              @switch($venue->sport->name)
-                @case('Badminton')
-                  🏸
-                  @break
-                @case('Futsal')
-                  ⚽
-                  @break
-                @case('Tennis')
-                  🎾
-                  @break
-                @case('Basketball')
-                  🏀
-                  @break
-                @default
-                  🏅
-              @endswitch
+              @if($venue->main_image)
+                @if(str_starts_with($venue->main_image, 'http'))
+                  <img src="{{ $venue->main_image }}" 
+                       alt="{{ $venue->name }}" 
+                       style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                @else
+                  <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
+                       alt="{{ $venue->name }}" 
+                       style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                @endif
+              @else
+                @switch($venue->sport->name)
+                  @case('Badminton')
+                    🏸
+                    @break
+                  @case('Futsal')
+                    ⚽
+                    @break
+                  @case('Tennis')
+                    🎾
+                    @break
+                  @case('Basketball')
+                    🏀
+                    @break
+                  @default
+                    🏅
+                @endswitch
+              @endif
             </div>
             <div class="venue-details">
               <h3>{{ $venue->name }}</h3>
@@ -630,8 +642,8 @@
               <span class="detail-label">Waktu:</span>
               <div class="detail-value">
                 <div class="time-slots-list">
-                  @foreach($booking->selected_time_slots as $slot)
-                    <span class="time-slot-badge">{{ $slot }}:00</span>
+                  @foreach($booking->getSelectedTimeSlots() as $slot)
+                    <span class="time-slot-badge">{{ $slot }}</span>
                   @endforeach
                 </div>
               </div>

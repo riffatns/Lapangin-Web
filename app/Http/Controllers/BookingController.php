@@ -19,13 +19,39 @@ class BookingController extends Controller
             ->orderBy('booking_date', 'desc')
             ->get();
         
-        // Group bookings by status
-        $activeBookings = $bookings->where('status', 'confirmed');
+        // Update booking statuses based on current time for confirmed bookings
+        $this->updateBookingStatuses($bookings);
+        
+        // Group bookings by status - use the dynamic status
+        $activeBookings = $bookings->filter(function($booking) {
+            $currentStatus = $booking->getCurrentStatus();
+            return in_array($currentStatus, ['confirmed', 'on_going']);
+        });
+        
         $pendingBookings = $bookings->where('status', 'pending');
-        $completedBookings = $bookings->where('status', 'completed');
+        $completedBookings = $bookings->filter(function($booking) {
+            return $booking->getCurrentStatus() === 'completed' || $booking->status === 'completed';
+        });
         $cancelledBookings = $bookings->where('status', 'cancelled');
         
         return view('pesanan', compact('bookings', 'activeBookings', 'pendingBookings', 'completedBookings', 'cancelledBookings'));
+    }
+    
+    /**
+     * Update booking statuses based on current time
+     */
+    private function updateBookingStatuses($bookings)
+    {
+        foreach ($bookings as $booking) {
+            if ($booking->status === 'confirmed') {
+                $currentStatus = $booking->getCurrentStatus();
+                
+                // If the booking should be completed, update it in the database
+                if ($currentStatus === 'completed' && $booking->status !== 'completed') {
+                    $booking->update(['status' => 'completed']);
+                }
+            }
+        }
     }
     
     public function cancel(Request $request, $bookingId)

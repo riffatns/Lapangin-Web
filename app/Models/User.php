@@ -83,6 +83,38 @@ class User extends Authenticatable
         return $this->hasMany(CommunityMember::class);
     }
 
+    // PlayTogether relationships
+    public function organizedPlayTogethers()
+    {
+        return $this->morphMany(PlayTogether::class, 'organizer');
+    }
+
+    public function createdPlayTogethers()
+    {
+        return $this->hasMany(PlayTogether::class, 'created_by');
+    }
+
+    public function playTogetherParticipations()
+    {
+        return $this->hasMany(PlayTogetherParticipant::class);
+    }
+
+    // Tournament relationships
+    public function organizedTournaments()
+    {
+        return $this->morphMany(Tournament::class, 'organizer');
+    }
+
+    public function createdTournaments()
+    {
+        return $this->hasMany(Tournament::class, 'created_by');
+    }
+
+    public function tournamentParticipations()
+    {
+        return $this->hasMany(TournamentParticipant::class);
+    }
+
     // Helper methods
     public function getTotalBookingsAttribute()
     {

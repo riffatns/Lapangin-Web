@@ -66,6 +66,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/komunitas/{community}/join', [CommunityController::class, 'join'])->name('community.join');
     Route::post('/komunitas/{community}/leave', [CommunityController::class, 'leave'])->name('community.leave');
     
+    // PlayTogether routes
+    Route::post('/play-together/{playTogether}/join', [CommunityController::class, 'joinPlayTogether'])->name('play-together.join');
+    Route::post('/play-together/{playTogether}/leave', [CommunityController::class, 'leavePlayTogether'])->name('play-together.leave');
+    
+    // Tournament routes
+    Route::post('/tournament/{tournament}/register', [CommunityController::class, 'registerTournament'])->name('tournament.register');
+    Route::post('/tournament/{tournament}/unregister', [CommunityController::class, 'unregisterTournament'])->name('tournament.unregister');
+    
     // Notification routes
     Route::post('/notifications/sample', [NotificationController::class, 'createSample'])->name('notifications.sample');
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');

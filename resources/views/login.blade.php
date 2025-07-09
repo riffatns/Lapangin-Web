@@ -101,7 +101,7 @@
       text-align: center;
     }
     .link a {
-      color: #3b82f6;
+      color: #f59e0b;
       text-decoration: none;
     }
   </style>

@@ -144,6 +144,8 @@
       border-radius: 6px;
       font-weight: 500;
       transition: all 0.2s ease;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
     }
     
     .filter-tab.active {
@@ -172,29 +174,38 @@
       font-weight: 500;
       transition: all 0.2s ease;
       position: relative;
+      min-width: 140px;
+      text-align: center;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
     }
     
     .location-filter:hover {
       background-color: #525252;
     }
-
+    
     .filter-dropdown {
       position: absolute;
       top: 100%;
-      left: 0;
-      right: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
       background-color: #2c2c2e;
+      border: 1px solid #404040;
       border-radius: 6px;
-      margin-top: 0.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      z-index: 100;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
+      margin-top: 0.25rem;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      min-width: 180px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
     }
 
     .filter-dropdown.show {
-      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
     }
 
     .dropdown-item {
@@ -203,6 +214,7 @@
       transition: all 0.2s ease;
       color: white;
       border-bottom: 1px solid #404040;
+      font-size: 0.9rem;
     }
 
     .dropdown-item:hover {
@@ -216,25 +228,6 @@
     .dropdown-item.selected {
       background-color: #f59e0b;
       color: white;
-    }
-    
-    .search-bar {
-      margin-left: 2rem;
-      position: relative;
-    }
-    
-    .search-bar input {
-      background-color: #404040;
-      border: none;
-      padding: 0.5rem 2.5rem 0.5rem 1rem;
-      border-radius: 6px;
-      color: white;
-      font-size: 0.9rem;
-      width: 250px;
-    }
-    
-    .search-bar input::placeholder {
-      color: #999;
     }
     
     /* Filter Summary Bar */
@@ -302,6 +295,25 @@
     
     .clear-all-filters:hover {
       background-color: #525252;
+    }
+    
+    .search-bar {
+      margin-left: 2rem;
+      position: relative;
+    }
+    
+    .search-bar input {
+      background-color: #404040;
+      border: none;
+      padding: 0.5rem 2.5rem 0.5rem 1rem;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.9rem;
+      width: 250px;
+    }
+    
+    .search-bar input::placeholder {
+      color: #999;
     }
     
     /* Content Area */
@@ -588,9 +600,15 @@
           <div class="field-card">
             <div class="card-image {{ strtolower($venue->sport->name) }}">
               @if($venue->main_image)
-                <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
-                     alt="{{ $venue->name }}" 
-                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px 12px 0 0;">
+                @if(str_starts_with($venue->main_image, 'http'))
+                  <img src="{{ $venue->main_image }}" 
+                       alt="{{ $venue->name }}" 
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                  <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
+                       alt="{{ $venue->name }}" 
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                @endif
               @endif
               <div class="location-badge">📍 {{ $venue->location }}</div>
             </div>

@@ -269,8 +269,21 @@
     <div class="booking-card">
       <div class="booking-header">
         <div class="venue-info">
-          <h2>{{ $booking->venue->name }}</h2>
-          <span class="sport-type">{{ $booking->venue->sport->name }}</span>
+          @if($booking->venue->main_image)
+            @if(str_starts_with($booking->venue->main_image, 'http'))
+              <img src="{{ $booking->venue->main_image }}" 
+                   alt="{{ $booking->venue->name }}" 
+                   style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 1rem; float: left;">
+            @else
+              <img src="{{ asset('img/venues/' . $booking->venue->main_image) }}" 
+                   alt="{{ $booking->venue->name }}" 
+                   style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 1rem; float: left;">
+            @endif
+          @endif
+          <div>
+            <h2>{{ $booking->venue->name }}</h2>
+            <span class="sport-type">{{ $booking->venue->sport->name }}</span>
+          </div>
         </div>
         <div class="status status-{{ $booking->status }}">
           @if($booking->status == 'pending')
@@ -327,16 +340,14 @@
         </div>
       </div>
 
-      @if($booking->selected_time_slots && is_array($booking->selected_time_slots))
       <div class="time-slots">
         <h3>Slot Waktu Dipilih</h3>
         <div class="slots-grid">
-          @foreach($booking->selected_time_slots as $slot)
+          @foreach($booking->getSelectedTimeSlots() as $slot)
             <div class="slot">{{ $slot }}</div>
           @endforeach
         </div>
       </div>
-      @endif
 
       @if($booking->status == 'completed' && $booking->rating)
       <div class="rating-section">

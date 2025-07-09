@@ -563,64 +563,275 @@
 
       <!-- Communities Grid -->
       <div class="communities-grid" id="communities-grid">
-        @foreach($communities as $community)
-        <div class="community-card" data-type="all {{ $community->is_member ? 'my' : '' }}">
-          <div class="community-header {{ strtolower($community->sport->name) }}">
-            <div class="community-sport-icon">
-              @switch($community->sport->name)
-                @case('Badminton')
-                  🏸
-                  @break
-                @case('Futsal')
-                  ⚽
-                  @break
-                @case('Tennis')
-                  🎾
-                  @break
-                @case('Basketball')
-                  🏀
-                  @break
-                @case('Volleyball')
-                  🏐
-                  @break
-                @default
-                  🏅
-              @endswitch
+        <!-- Communities Tab Content -->
+        <div class="tab-content" data-tab="all">
+          @foreach($communities as $community)
+          <div class="community-card" data-type="all {{ $community->is_member ? 'my' : '' }}">
+            <div class="community-header {{ strtolower($community->sport->name) }}">
+              <div class="community-sport-icon">
+                @switch($community->sport->name)
+                  @case('Badminton')
+                    🏸
+                    @break
+                  @case('Futsal')
+                    ⚽
+                    @break
+                  @case('Tennis')
+                    🎾
+                    @break
+                  @case('Basketball')
+                    🏀
+                    @break
+                  @case('Volleyball')
+                    🏐
+                    @break
+                  @default
+                    🏅
+                @endswitch
+              </div>
+              <div class="community-name">{{ $community->name }}</div>
+              <div class="community-description">{{ $community->description }}</div>
+              <div class="community-stats">
+                <span class="community-stat">👥 {{ $community->members_count ?? 0 }} members</span>
+                <span class="community-stat">🏆 Level {{ $community->level ?? 1 }}</span>
+              </div>
             </div>
-            <div class="community-name">{{ $community->name }}</div>
-            <div class="community-description">{{ $community->description }}</div>
-            <div class="community-stats">
-              <span class="community-stat">👥 {{ $community->members_count ?? 0 }} members</span>
-              <span class="community-stat">🏆 Level {{ $community->level ?? 1 }}</span>
+            <div class="community-content">
+              <div class="community-features">
+                @if($community->features)
+                  @foreach(explode(',', $community->features) as $feature)
+                    <span class="feature-tag {{ $loop->first ? 'highlight' : '' }}">{{ trim($feature) }}</span>
+                  @endforeach
+                @else
+                  <span class="feature-tag highlight">General</span>
+                @endif
+              </div>
+              <div class="community-actions">
+                @if($community->is_member)
+                  <form action="{{ route('community.leave', $community) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="action-btn btn-secondary">Keluar</button>
+                  </form>
+                @else
+                  <form action="{{ route('community.join', $community) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="action-btn btn-primary">Gabung</button>
+                  </form>
+                @endif
+                <a href="#" class="action-btn btn-secondary">Detail</a>
+              </div>
             </div>
           </div>
-          <div class="community-content">
-            <div class="community-features">
-              @if($community->features)
-                @foreach(explode(',', $community->features) as $feature)
-                  <span class="feature-tag {{ $loop->first ? 'highlight' : '' }}">{{ trim($feature) }}</span>
-                @endforeach
-              @else
-                <span class="feature-tag highlight">General</span>
-              @endif
+          @endforeach
+        </div>
+
+        <!-- My Communities Tab Content -->
+        <div class="tab-content" data-tab="my" style="display: none;">
+          @foreach($communities->where('is_member', true) as $community)
+          <div class="community-card">
+            <div class="community-header {{ strtolower($community->sport->name) }}">
+              <div class="community-sport-icon">
+                @switch($community->sport->name)
+                  @case('Badminton')
+                    🏸
+                    @break
+                  @case('Futsal')
+                    ⚽
+                    @break
+                  @case('Tennis')
+                    🎾
+                    @break
+                  @case('Basketball')
+                    🏀
+                    @break
+                  @case('Volleyball')
+                    🏐
+                    @break
+                  @default
+                    🏅
+                @endswitch
+              </div>
+              <div class="community-name">{{ $community->name }}</div>
+              <div class="community-description">{{ $community->description }}</div>
+              <div class="community-stats">
+                <span class="community-stat">👥 {{ $community->members_count ?? 0 }} members</span>
+                <span class="community-stat">🏆 Level {{ $community->level ?? 1 }}</span>
+              </div>
             </div>
-            <div class="community-actions">
-              @if($community->is_member)
+            <div class="community-content">
+              <div class="community-features">
+                @if($community->features)
+                  @foreach(explode(',', $community->features) as $feature)
+                    <span class="feature-tag {{ $loop->first ? 'highlight' : '' }}">{{ trim($feature) }}</span>
+                  @endforeach
+                @else
+                  <span class="feature-tag highlight">General</span>
+                @endif
+              </div>
+              <div class="community-actions">
                 <form action="{{ route('community.leave', $community) }}" method="POST" style="display: inline;">
                   @csrf
                   <button type="submit" class="action-btn btn-secondary">Keluar</button>
                 </form>
-              @else
-                <form action="{{ route('community.join', $community) }}" method="POST" style="display: inline;">
-                  @csrf
-                  <button type="submit" class="action-btn btn-primary">Gabung</button>
-                </form>
-              @endif
-              <a href="#" class="action-btn btn-secondary">Detail</a>
+                <a href="#" class="action-btn btn-secondary">Detail</a>
+              </div>
             </div>
           </div>
+          @endforeach
         </div>
-        @endforeach
+
+        <!-- Play Together Tab Content -->
+        <div class="tab-content" data-tab="play" style="display: none;">
+          @foreach($playTogethers as $playTogether)
+          <div class="community-card">
+            <div class="community-header {{ strtolower($playTogether->sport->name) }}">
+              <div class="community-sport-icon">
+                @switch($playTogether->sport->name)
+                  @case('Badminton')
+                    🏸
+                    @break
+                  @case('Futsal')
+                    ⚽
+                    @break
+                  @case('Tennis')
+                    🎾
+                    @break
+                  @case('Basketball')
+                    🏀
+                    @break
+                  @case('Volleyball')
+                    🏐
+                    @break
+                  @default
+                    🏅
+                @endswitch
+              </div>
+              <div class="community-name">{{ $playTogether->title }}</div>
+              <div class="community-description">{{ $playTogether->description }}</div>
+              <div class="community-stats">
+                <span class="community-stat">👥 {{ $playTogether->current_participants }}/{{ $playTogether->max_participants }}</span>
+                <span class="community-stat">📅 {{ $playTogether->formatted_scheduled_date }}</span>
+                <span class="community-stat">⏰ {{ $playTogether->formatted_scheduled_time }}</span>
+              </div>
+            </div>
+            <div class="community-content">
+              <div class="community-features">
+                <span class="feature-tag highlight">{{ $playTogether->skill_level ?? 'All Levels' }}</span>
+                @if($playTogether->venue)
+                  <span class="feature-tag">📍 {{ $playTogether->venue->name }}</span>
+                @else
+                  <span class="feature-tag">📍 {{ $playTogether->location }}</span>
+                @endif
+                @if($playTogether->price_per_person > 0)
+                  <span class="feature-tag">💰 Rp {{ number_format($playTogether->price_per_person, 0, ',', '.') }}</span>
+                @else
+                  <span class="feature-tag">🆓 Gratis</span>
+                @endif
+              </div>
+              <div class="community-actions">
+                @if($playTogether->is_participant)
+                  <form action="{{ route('play-together.leave', $playTogether) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="action-btn btn-secondary">Keluar</button>
+                  </form>
+                @else
+                  @if($playTogether->is_full)
+                    <button class="action-btn btn-secondary" disabled>Penuh</button>
+                  @else
+                    <form action="{{ route('play-together.join', $playTogether) }}" method="POST" style="display: inline;">
+                      @csrf
+                      <button type="submit" class="action-btn btn-primary">Gabung</button>
+                    </form>
+                  @endif
+                @endif
+                <a href="#" class="action-btn btn-secondary">Detail</a>
+              </div>
+            </div>
+          </div>
+          @endforeach
+        </div>
+
+        <!-- Tournament Tab Content -->
+        <div class="tab-content" data-tab="tournament" style="display: none;">
+          @foreach($tournaments as $tournament)
+          <div class="community-card">
+            <div class="community-header {{ strtolower($tournament->sport->name) }}">
+              <div class="community-sport-icon">
+                @switch($tournament->sport->name)
+                  @case('Badminton')
+                    🏸
+                    @break
+                  @case('Futsal')
+                    ⚽
+                    @break
+                  @case('Tennis')
+                    🎾
+                    @break
+                  @case('Basketball')
+                    🏀
+                    @break
+                  @case('Volleyball')
+                    🏐
+                    @break
+                  @default
+                    🏅
+                @endswitch
+              </div>
+              <div class="community-name">{{ $tournament->name }}</div>
+              <div class="community-description">{{ $tournament->description }}</div>
+              <div class="community-stats">
+                <span class="community-stat">👥 {{ $tournament->current_participants }}/{{ $tournament->max_participants }}</span>
+                <span class="community-stat">📅 {{ $tournament->formatted_start_date }}</span>
+                <span class="community-stat">⏰ Daftar sampai: {{ $tournament->formatted_registration_deadline }}</span>
+                @if($tournament->prize_pool > 0)
+                  <span class="community-stat">🏆 Rp {{ number_format($tournament->prize_pool, 0, ',', '.') }}</span>
+                @endif
+              </div>
+            </div>
+            <div class="community-content">
+              <div class="community-features">
+                <span class="feature-tag highlight">{{ $tournament->tournament_type ?? 'Tournament' }}</span>
+                <span class="feature-tag">🎯 {{ $tournament->skill_level ?? 'All Levels' }}</span>
+                @if($tournament->venue)
+                  <span class="feature-tag">📍 {{ $tournament->venue->name }}</span>
+                @else
+                  <span class="feature-tag">📍 {{ $tournament->location }}</span>
+                @endif
+                @if($tournament->entry_fee > 0)
+                  <span class="feature-tag">💰 Rp {{ number_format($tournament->entry_fee, 0, ',', '.') }}</span>
+                @else
+                  <span class="feature-tag">🆓 Gratis</span>
+                @endif
+                @if($tournament->status === 'registration_open')
+                  <span class="feature-tag highlight">🔓 Pendaftaran Terbuka</span>
+                @elseif($tournament->status === 'registration_closed')
+                  <span class="feature-tag">🔒 Pendaftaran Ditutup</span>
+                @endif
+              </div>
+              <div class="community-actions">
+                @if($tournament->is_participant)
+                  <form action="{{ route('tournament.unregister', $tournament) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="action-btn btn-secondary">Batal</button>
+                  </form>
+                @else
+                  @if(!$tournament->is_registration_open)
+                    <button class="action-btn btn-secondary" disabled>
+                      @if($tournament->is_full) Penuh @else Ditutup @endif
+                    </button>
+                  @else
+                    <form action="{{ route('tournament.register', $tournament) }}" method="POST" style="display: inline;">
+                      @csrf
+                      <button type="submit" class="action-btn btn-primary">Daftar</button>
+                    </form>
+                  @endif
+                @endif
+                <a href="#" class="action-btn btn-secondary">Detail</a>
+              </div>
+            </div>
+          </div>
+          @endforeach
+        </div>
       </div>
     </div>
   </div>
@@ -629,7 +840,7 @@
     // Tab functionality
     document.addEventListener('DOMContentLoaded', function() {
       const tabBtns = document.querySelectorAll('.tab-btn');
-      const communityCards = document.querySelectorAll('.community-card');
+      const tabContents = document.querySelectorAll('.tab-content');
       
       tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -640,19 +851,24 @@
           
           const activeTab = this.dataset.tab;
           
-          // Show/hide communities based on tab
-          communityCards.forEach(card => {
-            if (activeTab === 'all') {
-              card.style.display = 'block';
-            } else if (activeTab === 'my') {
-              card.style.display = card.dataset.type.includes('my') ? 'block' : 'none';
-            } else {
-              // For other tabs, show all for now (can be enhanced later)
-              card.style.display = 'block';
-            }
+          // Hide all tab contents
+          tabContents.forEach(content => {
+            content.style.display = 'none';
           });
+          
+          // Show active tab content
+          const activeContent = document.querySelector(`.tab-content[data-tab="${activeTab}"]`);
+          if (activeContent) {
+            activeContent.style.display = 'grid';
+          }
         });
       });
+
+      // Set initial display style for grid
+      const allTabContent = document.querySelector('.tab-content[data-tab="all"]');
+      if (allTabContent) {
+        allTabContent.style.display = 'grid';
+      }
     });
   </script>
 </body>
