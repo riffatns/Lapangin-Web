@@ -1366,39 +1366,60 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}'
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
+          'Accept': 'application/json'
         },
         credentials: 'same-origin'
       })
       .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        Swal.fire({
-          title: 'Email Verifikasi Dikirim!',
-          text: data.message || 'Silakan cek email Anda untuk melakukan verifikasi. Jika tidak ada, periksa folder spam.',
-          icon: 'success',
-          background: '#2c2c2e',
-          color: '#fff',
-          confirmButtonColor: '#f59e0b'
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
+        // Always try to parse JSON, even for error responses
+        return response.json().then(data => {
+          console.log('Response data:', data);
+          return { status: response.status, ok: response.ok, data: data };
         });
+      })
+      .then(result => {
+        console.log('Final result:', result);
+        
+        // Check for explicit error in response data
+        if (result.data.error) {
+          throw new Error(result.data.error);
+        }
+        
+        // Check for success (status 200 and has message)
+        if (result.ok && result.data.message) {
+          Swal.fire({
+            title: 'Email Verifikasi Dikirim!',
+            text: result.data.message,
+            icon: 'success',
+            background: '#2c2c2e',
+            color: '#fff',
+            confirmButtonColor: '#f59e0b'
+          });
+        } else {
+          // Handle other status codes
+          let errorMsg = 'Terjadi kesalahan saat mengirim email verifikasi.';
+          if (result.status === 429) {
+            errorMsg = 'Terlalu banyak permintaan. Silakan tunggu beberapa saat.';
+          } else if (result.status === 422) {
+            errorMsg = 'Data tidak valid. Silakan refresh halaman.';
+          } else if (result.status >= 500) {
+            errorMsg = 'Masalah server. Silakan coba lagi nanti.';
+          }
+          throw new Error(errorMsg);
+        }
       })
       .catch(error => {
         console.error('Email verification error:', error);
-        let errorMessage = 'Terjadi kesalahan saat mengirim email verifikasi. ';
         
-        if (error.message.includes('Failed to fetch')) {
-          errorMessage += 'Periksa koneksi internet Anda.';
-        } else if (error.message.includes('500')) {
-          errorMessage += 'Masalah pada server. Silakan coba lagi nanti.';
-        } else {
-          errorMessage += 'Silakan coba lagi.';
+        let errorMessage = error.message || 'Terjadi kesalahan saat mengirim email verifikasi.';
+        
+        // Override generic error messages with more helpful ones
+        if (error.message && error.message.includes('Failed to fetch')) {
+          errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
         }
         
         Swal.fire({
