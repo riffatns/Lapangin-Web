@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Email Testing Files
+test_*.php
+*_test.php
+final_*.php
+simple_*.php
