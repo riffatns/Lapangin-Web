@@ -2,21 +2,15 @@
 
 echo "Starting Railway build process..."
 
-# Create .env from example if not exists
-if [ ! -f .env ]; then
-    echo "Creating .env from .env.example..."
-    cp .env.example .env
-fi
-
 # Install dependencies
 echo "Installing Composer dependencies..."
 composer install --optimize-autoloader --no-dev
 
-# Clear and cache config (if possible)
-echo "Caching Laravel configurations..."
-php artisan config:clear
-php artisan config:cache || echo "Config cache skipped"
-php artisan route:cache || echo "Route cache skipped"
-php artisan view:cache || echo "View cache skipped"
+# Clear any cached configs to avoid conflicts
+echo "Clearing cached configurations..."
+php artisan config:clear || echo "Config clear skipped"
+php artisan route:clear || echo "Route clear skipped" 
+php artisan view:clear || echo "View clear skipped"
+php artisan cache:clear || echo "Cache clear skipped"
 
 echo "Railway build completed successfully!"
