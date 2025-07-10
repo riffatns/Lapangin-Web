@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop existing table if it exists to create new structure
+        Schema::dropIfExists('tournament_participants');
+        
         Schema::create('tournament_participants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tournament_id')->constrained()->onDelete('cascade');

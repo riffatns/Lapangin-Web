@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop existing table if it exists to create new structure  
+        Schema::dropIfExists('play_togethers');
+        
         Schema::create('play_togethers', function (Blueprint $table) {
             $table->id();
             $table->string('title');
