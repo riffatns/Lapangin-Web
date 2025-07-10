@@ -1,10 +1,10 @@
+[phases.setup]
+nixpkgs = ["php83", "php83Packages.composer", "nodejs_18"]
+
 [phases.build]
 cmds = [
     "composer install --optimize-autoloader --no-dev"
 ]
-
-[phases.setup]
-nixpkgs = ["php83", "php83Packages.composer", "nodejs_18"]
 
 [start]
 cmd = "bash railway-start.sh"
@@ -12,3 +12,4 @@ cmd = "bash railway-start.sh"
 [variables]
 APP_ENV = "production"
 LOG_CHANNEL = "stderr"
+APP_DEBUG = "false"
