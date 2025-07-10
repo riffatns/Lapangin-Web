@@ -1,0 +1,9 @@
+[phases.build]
+cmds = ["composer install --optimize-autoloader --no-dev"]
+
+[phases.setup]
+nixpkgs = ["php83", "php83Packages.composer", "nginx", "nodejs_18"]
+
+[variables]
+APP_ENV = "production"
+LOG_CHANNEL = "stderr"
