@@ -49,10 +49,18 @@
             "@php artisan migrate --graceful --ansi"
         ],
         "railway-deploy": [
+            "cp .env.production .env",
             "php artisan config:cache",
             "php artisan route:cache", 
             "php artisan view:cache",
-            "php artisan migrate --force"
+            "php artisan migrate --force",
+            "php artisan db:seed --force"
+        ],
+        "vercel-build": [
+            "composer install --optimize-autoloader --no-dev",
+            "@php artisan config:cache",
+            "@php artisan route:cache",
+            "@php artisan view:cache"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",

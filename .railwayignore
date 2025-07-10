@@ -1,0 +1,39 @@
+# Development files
+.env.local
+.env.development
+.env.example
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+tests/
+*.test.js
+*.spec.js
+phpunit.xml
+coverage/
+
+# Documentation
+README.md
+FEATURES_DOCUMENTATION.md
+FOOTER-IMPLEMENTATION-GUIDE.md
+GMAIL-SMTP-SETUP.md
+VERCEL-DEPLOYMENT.md
+
+# Development tools
+.vscode/
+.idea/
+*.log
+
+# Storage and cache (will be recreated)
+storage/logs/*
+!storage/logs/.gitkeep
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# Development scripts
+check_*.php
+create_sample_*.php
+test_*.php
+testing/
