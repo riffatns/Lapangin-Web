@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Profile - Lapangin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -297,53 +298,138 @@
     
     /* Form Styles */
     .form-section {
-      background-color: #2c2c2e !important;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      background: linear-gradient(145deg, #2c2c2e, #2a2a2c) !important;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
       border: 1px solid #404040;
       width: 100%;
       box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .form-section:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.1);
     }
     
     .form-section h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
       color: #f59e0b !important;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #404040;
+    }
+    
+    /* Alert Styles */
+    .alert {
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    .alert-success {
+      background: linear-gradient(145deg, #059669, #047857);
+      border: 1px solid #10b981;
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    
+    .alert-icon {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    
+    .alert-message {
+      flex: 1;
+      font-weight: 500;
+    }
+    
+    .alert-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+    
+    .alert-close:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
     }
     
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
       width: 100%;
       box-sizing: border-box;
     }
     
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     .form-group label {
       display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #ccc !important;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: #e5e5e5 !important;
+      font-size: 0.95rem;
     }
     
     .form-group input,
     .form-group select,
     .form-group textarea {
       width: 100%;
-      padding: 0.75rem;
-      background-color: #1a1a1a !important;
-      border: 1px solid #404040;
-      border-radius: 8px;
+      padding: 1rem;
+      background: linear-gradient(145deg, #1a1a1a, #1e1e1e) !important;
+      border: 2px solid #404040;
+      border-radius: 12px;
       color: white !important;
-      font-size: 0.9rem;
-      transition: border-color 0.2s ease;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
       box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
     }
     
     .form-group input:focus,
@@ -351,45 +437,73 @@
     .form-group textarea:focus {
       outline: none;
       border-color: #f59e0b !important;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    .form-group input:hover,
+    .form-group select:hover,
+    .form-group textarea:hover {
+      border-color: #525252;
     }
     
     .form-group textarea {
-      min-height: 100px;
+      min-height: 120px;
       resize: vertical;
+      line-height: 1.5;
+    }
+    
+    .form-group select {
+      cursor: pointer;
+    }
+    
+    .form-group select option {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 0.5rem;
     }
     
     /* Buttons */
     .btn {
-      padding: 0.75rem 1.5rem;
+      padding: 1rem 2rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      text-transform: none;
+      letter-spacing: 0.5px;
     }
     
     .btn-primary {
       background: linear-gradient(135deg, #f59e0b, #d97706) !important;
       color: white !important;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
     }
     
     .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+      background: linear-gradient(135deg, #d97706, #b45309) !important;
     }
     
     .btn-secondary {
-      background-color: #404040 !important;
+      background: linear-gradient(145deg, #404040, #525252) !important;
       color: white !important;
+      box-shadow: 0 4px 15px rgba(64, 64, 64, 0.2);
     }
     
     .btn-secondary:hover {
-      background-color: #525252 !important;
+      background: linear-gradient(145deg, #525252, #6b7280) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(82, 82, 82, 0.3);
     }
     
     .btn-danger {
@@ -408,6 +522,27 @@
     
     .btn-success:hover {
       background-color: #16a34a !important;
+    }
+    
+    /* Form Actions */
+    .form-actions {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #404040;
+    }
+    
+    @media (max-width: 768px) {
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .form-actions .btn {
+        width: 100%;
+      }
     }
     
     /* Stats Cards */
@@ -612,6 +747,81 @@
         margin: 0 auto;
       }
     }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .form-section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .form-section h3 {
+        font-size: 1.1rem;
+      }
+      
+      .sidebar {
+        width: 200px;
+        min-width: 200px;
+      }
+    }
+    
+    /* Enhanced Form Animations */
+    .form-group {
+      position: relative;
+    }
+    
+    .form-group input:not(:placeholder-shown) + label,
+    .form-group select:not([value=""]) + label,
+    .form-group textarea:not(:placeholder-shown) + label {
+      transform: translateY(-8px);
+      font-size: 0.85rem;
+      color: #f59e0b !important;
+    }
+    
+    /* Placeholder Enhancements */
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #666;
+      opacity: 0.8;
+    }
+    
+    /* Focus Effects */
+    .form-group.focused {
+      transform: scale(1.02);
+    }
+    
+    .form-group.focused label {
+      color: #f59e0b !important;
+    }
+    
+    /* Loading State */
+    .btn.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+      position: relative;
+    }
+    
+    .btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      margin: auto;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body style="background-color: #1a1a1a !important; color: white !important;">
@@ -714,8 +924,18 @@
 
       <!-- Personal Info Tab -->
       <div class="tab-content active" id="personal">
-        <form id="personalForm" onsubmit="updatePersonalInfo(event)">
+        <!-- Success Message -->
+        @if(session('success'))
+          <div class="alert alert-success" id="successAlert">
+            <span class="alert-icon">✅</span>
+            <span class="alert-message">{{ session('success') }}</span>
+            <button class="alert-close" onclick="closeAlert('successAlert')">&times;</button>
+          </div>
+        @endif
+
+        <form id="profileForm" method="POST" action="{{ route('profile.update') }}">
           @csrf
+          @method('PUT')
           <div class="form-section">
             <h3>📝 Informasi Dasar</h3>
             <div class="form-grid">
@@ -770,32 +990,35 @@
                 <label for="favorite_sport">Olahraga Favorit</label>
                 <select id="favorite_sport" name="favorite_sport">
                   <option value="">Pilih Olahraga</option>
-                  <option value="badminton">Badminton</option>
-                  <option value="futsal">Futsal</option>
-                  <option value="tennis">Tennis</option>
-                  <option value="basketball">Basketball</option>
-                  <option value="volleyball">Volleyball</option>
+                  <option value="badminton" {{ $profile?->favorite_sport == 'badminton' ? 'selected' : '' }}>Badminton</option>
+                  <option value="futsal" {{ $profile?->favorite_sport == 'futsal' ? 'selected' : '' }}>Futsal</option>
+                  <option value="tennis" {{ $profile?->favorite_sport == 'tennis' ? 'selected' : '' }}>Tennis</option>
+                  <option value="basketball" {{ $profile?->favorite_sport == 'basketball' ? 'selected' : '' }}>Basketball</option>
+                  <option value="volleyball" {{ $profile?->favorite_sport == 'volleyball' ? 'selected' : '' }}>Volleyball</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="skill_level">Level Skill</label>
                 <select id="skill_level" name="skill_level">
                   <option value="">Pilih Level</option>
-                  <option value="beginner">Pemula</option>
-                  <option value="intermediate">Menengah</option>
-                  <option value="advanced">Mahir</option>
-                  <option value="expert">Expert</option>
+                  <option value="beginner" {{ $profile?->skill_level == 'beginner' ? 'selected' : '' }}>Pemula</option>
+                  <option value="intermediate" {{ $profile?->skill_level == 'intermediate' ? 'selected' : '' }}>Menengah</option>
+                  <option value="advanced" {{ $profile?->skill_level == 'advanced' ? 'selected' : '' }}>Mahir</option>
+                  <option value="expert" {{ $profile?->skill_level == 'expert' ? 'selected' : '' }}>Expert</option>
                 </select>
               </div>
               <div class="form-group" style="grid-column: 1 / -1;">
                 <label for="bio">Bio</label>
-                <textarea id="bio" name="bio" placeholder="Ceritakan tentang diri Anda dan passion olahraga Anda"></textarea>
+                <textarea id="bio" name="bio" placeholder="Ceritakan tentang diri Anda dan passion olahraga Anda">{{ $profile?->bio }}</textarea>
               </div>
             </div>
           </div>
 
-          <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-            <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+              <span>🔄</span>
+              Reset
+            </button>
             <button type="submit" class="btn btn-primary">
               <span>💾</span>
               Simpan Perubahan
@@ -817,10 +1040,13 @@
               </div>
             </div>
             @if(!Auth::user()->email_verified_at)
-              <button class="btn btn-primary" onclick="sendVerificationEmail()">
-                <span>📧</span>
-                Kirim Verifikasi
-              </button>
+              <form method="POST" action="{{ route('verification.send') }}" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-primary" onclick="sendVerificationEmail(); return false;">
+                  <span>📧</span>
+                  Kirim Verifikasi
+                </button>
+              </form>
             @else
               <span class="verification-status verified">
                 <span>✓</span>
@@ -996,6 +1222,26 @@
       document.getElementById(tabName).classList.add('active');
     }
 
+    function closeAlert(alertId) {
+      const alert = document.getElementById(alertId);
+      if (alert) {
+        alert.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => {
+          alert.remove();
+        }, 300);
+      }
+    }
+
+    // Auto-hide success alert after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+      const successAlert = document.getElementById('successAlert');
+      if (successAlert) {
+        setTimeout(() => {
+          closeAlert('successAlert');
+        }, 5000);
+      }
+    });
+
     function uploadAvatar() {
       Swal.fire({
         title: 'Upload Foto Profil',
@@ -1031,26 +1277,138 @@
     }
 
     function resetForm() {
-      document.getElementById('personalForm').reset();
-      
-      Swal.fire({
-        title: 'Form Direset',
-        text: 'Semua perubahan dibatalkan',
-        icon: 'info',
-        background: '#2c2c2e',
-        color: '#fff',
-        confirmButtonColor: '#f59e0b'
-      });
+      if (confirm('Apakah Anda yakin ingin mereset semua perubahan?')) {
+        document.getElementById('profileForm').reset();
+        
+        // Show success message
+        Swal.fire({
+          icon: 'info',
+          title: 'Form direset',
+          text: 'Semua perubahan telah dibatalkan',
+          background: '#2c2c2e',
+          color: 'white',
+          confirmButtonColor: '#f59e0b'
+        });
+      }
     }
+    
+    // Add form validation
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+      
+      const requiredFields = ['name', 'email'];
+      let missingFields = [];
+      
+      requiredFields.forEach(field => {
+        const input = document.getElementById(field);
+        if (!input.value.trim()) {
+          missingFields.push(field);
+        }
+      });
+      
+      if (missingFields.length > 0) {
+        e.preventDefault();
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Data tidak lengkap',
+          text: 'Mohon lengkapi semua field yang wajib diisi',
+          background: '#2c2c2e',
+          color: 'white',
+          confirmButtonColor: '#f59e0b'
+        });
+        return false;
+      }
+      
+      // If validation passes, show loading state
+      Swal.fire({
+        title: 'Menyimpan...',
+        text: 'Mohon tunggu sebentar',
+        background: '#2c2c2e',
+        color: 'white',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+    });
+    
+    // Add input animations
+    document.querySelectorAll('.form-group input, .form-group select, .form-group textarea').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
 
     function sendVerificationEmail() {
+      // Show loading state
       Swal.fire({
-        title: 'Email Verifikasi Dikirim!',
-        text: 'Silakan cek email Anda untuk melakukan verifikasi',
-        icon: 'success',
+        title: 'Mengirim email...',
+        text: 'Mohon tunggu sebentar',
         background: '#2c2c2e',
-        color: '#fff',
-        confirmButtonColor: '#f59e0b'
+        color: 'white',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // Send POST request to verification.send route
+      fetch('{{ route('verification.send') }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}'
+        },
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        Swal.fire({
+          title: 'Email Verifikasi Dikirim!',
+          text: data.message || 'Silakan cek email Anda untuk melakukan verifikasi. Jika tidak ada, periksa folder spam.',
+          icon: 'success',
+          background: '#2c2c2e',
+          color: '#fff',
+          confirmButtonColor: '#f59e0b'
+        });
+      })
+      .catch(error => {
+        console.error('Email verification error:', error);
+        let errorMessage = 'Terjadi kesalahan saat mengirim email verifikasi. ';
+        
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage += 'Periksa koneksi internet Anda.';
+        } else if (error.message.includes('500')) {
+          errorMessage += 'Masalah pada server. Silakan coba lagi nanti.';
+        } else {
+          errorMessage += 'Silakan coba lagi.';
+        }
+        
+        Swal.fire({
+          title: 'Gagal Mengirim',
+          text: errorMessage,
+          icon: 'error',
+          background: '#2c2c2e',
+          color: '#fff',
+          confirmButtonColor: '#f59e0b'
+        });
       });
     }
 

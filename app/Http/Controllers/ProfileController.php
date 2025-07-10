@@ -36,7 +36,8 @@ class ProfileController extends Controller
             'district' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:500',
             'bio' => 'nullable|string|max:1000',
-            'favorite_sports' => 'nullable|array',
+            'favorite_sport' => 'nullable|string',
+            'skill_level' => 'nullable|string',
         ]);
         
         $user = Auth::user()->load('profile');
@@ -53,7 +54,8 @@ class ProfileController extends Controller
             'district' => $request->district,
             'address' => $request->address,
             'bio' => $request->bio,
-            'favorite_sports' => $request->favorite_sports ? implode(',', $request->favorite_sports) : null,
+            'favorite_sport' => $request->favorite_sport,
+            'skill_level' => $request->skill_level,
         ];
         
         if ($user->profile) {
