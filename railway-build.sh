@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Copy production environment file
+cp .env.production .env
+
 # Install dependencies
 composer install --optimize-autoloader --no-dev
 
