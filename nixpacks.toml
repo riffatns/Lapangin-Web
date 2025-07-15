@@ -12,4 +12,4 @@ cmd = "bash railway-start-minimal.sh"
 [variables]
 APP_ENV = "production"
 LOG_CHANNEL = "stderr"
-APP_DEBUG = "false"
+APP_DEBUG = "true"
