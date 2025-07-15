@@ -15,14 +15,44 @@ echo "<!DOCTYPE html>
     <h2>Database Test</h2>";
 
 try {
-    $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=lapangin_db', 'root', '');
-    echo "<p style='color:green'>✅ Database connection: OK</p>";
+    $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
+    $database = $_ENV['DB_DATABASE'] ?? 'lapangin_db';
+    $username = $_ENV['DB_USERNAME'] ?? 'root';
+    $password = $_ENV['DB_PASSWORD'] ?? '';
     
-    $userCount = $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
-    echo "<p>Users in database: " . $userCount . "</p>";
+    echo "<p><strong>Connecting to:</strong> $host:3306</p>";
+    echo "<p><strong>Database:</strong> $database</p>";
+    echo "<p><strong>Username:</strong> $username</p>";
     
-} catch (Exception $e) {
-    echo "<p style='color:red'>❌ Database error: " . $e->getMessage() . "</p>";
+    $pdo = new PDO("mysql:host=$host;dbname=$database", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    echo "<p style='color: green;'>✅ Database connected successfully!</p>";
+    
+    // Test if tables exist
+    $stmt = $pdo->query("SHOW TABLES");
+    $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+    echo "<p><strong>Tables found:</strong> " . count($tables) . "</p>";
+    if (count($tables) > 0) {
+        echo "<ul>";
+        foreach ($tables as $table) {
+            echo "<li>$table</li>";
+        }
+        echo "</ul>";
+        
+        // If users table exists, count users
+        if (in_array('users', $tables)) {
+            $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
+            $count = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo "<p><strong>Users count:</strong> " . $count['count'] . "</p>";
+        }
+    } else {
+        echo "<p style='color: orange;'>⚠️ No tables found - migration needed</p>";
+    }
+    
+} catch (PDOException $e) {
+    echo "<p style='color: red;'>❌ Database error: " . $e->getMessage() . "</p>";
 }
 
 echo "
