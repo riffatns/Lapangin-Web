@@ -13,4 +13,8 @@ php artisan route:clear || echo "Route clear skipped"
 php artisan view:clear || echo "View clear skipped"
 php artisan cache:clear || echo "Cache clear skipped"
 
+# Run debug during build
+echo "Running debug analysis..."
+bash railway-debug-build.sh
+
 echo "Railway build completed successfully!"

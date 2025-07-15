@@ -7,7 +7,7 @@ cmds = [
 ]
 
 [start]
-cmd = "bash railway-start.sh"
+cmd = "bash railway-start-debug.sh"
 
 [variables]
 APP_ENV = "production"
