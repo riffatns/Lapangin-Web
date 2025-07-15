@@ -30,27 +30,31 @@ php debug-railway-db.php
 
 # Wait for database with timeout
 echo "⏳ Waiting for database connection..."
-for i in {1..20}; do
-    if timeout 30 bash check-db.sh; then
+for i in {1..30}; do
+    if php simple-db-test.php > /dev/null 2>&1; then
         echo "✅ Database connection established!"
         break
     else
-        echo "🔄 Attempt $i/20: Database not ready, waiting 15 seconds..."
-        sleep 15
+        echo "🔄 Attempt $i/30: Database not ready, waiting 10 seconds..."
+        sleep 10
     fi
     
-    if [ $i -eq 20 ]; then
+    if [ $i -eq 30 ]; then
         echo "❌ Database connection timeout after 5 minutes"
-        echo "Debug: Trying direct connection test..."
-        php -r "
-            try {
-                \$pdo = new PDO('mysql:host='.\$_ENV['MYSQLHOST'].';port='.\$_ENV['MYSQLPORT'].';dbname='.\$_ENV['MYSQLDATABASE'], \$_ENV['MYSQLUSER'], \$_ENV['MYSQLPASSWORD'] ?? '');
-                echo 'Direct connection: SUCCESS\n';
-            } catch(Exception \$e) {
-                echo 'Direct connection error: ' . \$e->getMessage() . '\n';
-            }
-        "
-        exit 1
+        echo "Running detailed debug..."
+        php simple-db-test.php
+        echo "Available environment variables:"
+        env | grep -E "(MYSQL|DB_|RAILWAY)" | sort
+        
+        # Try to force setup anyway
+        echo "Trying to force setup..."
+        bash force-db-setup.sh
+        
+        if [ $? -ne 0 ]; then
+            echo "❌ Force setup failed"
+            exit 1
+        fi
+        break
     fi
 done
 
