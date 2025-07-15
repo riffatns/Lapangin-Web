@@ -1,10 +1,21 @@
 #!/bin/bash
 
-echo "🚀 Minimal Railway Start (Skip DB Check)"
+echo "🚀 Minimal Railway Start"
 
 # Show environment
 echo "=== Environment Variables ==="
-env | grep -E "(MYSQL|DB_|RAILWAY)" | sort
+env | grep -E "(APP_|DB_|MYSQL|RAILWAY)" | sort
+
+# Test database connection
+echo "=== Database Test ==="
+php -r "
+try {
+    new PDO('mysql:host=127.0.0.1;port=3306;dbname=lapangin_db', 'root', '');
+    echo 'Database: OK' . PHP_EOL;
+} catch(Exception \$e) {
+    echo 'Database: ERROR - ' . \$e->getMessage() . PHP_EOL;
+}
+"
 
 # Generate APP_KEY if missing
 if [ -z "$APP_KEY" ]; then
@@ -13,18 +24,19 @@ if [ -z "$APP_KEY" ]; then
     echo "✅ Application key generated"
 fi
 
-# Clear cache without database
+# Clear cache
 echo "🧹 Clearing cache..."
 php artisan config:clear 2>/dev/null || echo "Config clear skipped"
 php artisan route:clear 2>/dev/null || echo "Route clear skipped"
 php artisan view:clear 2>/dev/null || echo "View clear skipped"
+php artisan cache:clear 2>/dev/null || echo "Cache clear skipped"
 
-# Start server without database setup
-echo "🌐 Starting Laravel server (DB setup skipped)..."
-echo "Port: ${PORT:-8000}"
+# Test Laravel before starting
+echo "🔍 Testing Laravel..."
+php debug-web-error.php
 
-# Set session driver to file instead of database
-export SESSION_DRIVER=file
-export CACHE_DRIVER=file
+# Start server
+echo "🌐 Starting Laravel server on port ${PORT:-8000}..."
+echo "Access URL: https://web-production-2c24.up.railway.app"
 
 exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
