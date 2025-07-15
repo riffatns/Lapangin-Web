@@ -44,12 +44,12 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DB_URL'),
+            'url' => env('MYSQL_URL'),
             'host' => env('DB_HOST', env('MYSQLHOST', '127.0.0.1')),
             'port' => env('DB_PORT', env('MYSQLPORT', '3306')),
-            'database' => env('DB_DATABASE', env('MYSQLDATABASE', 'laravel')),
+            'database' => env('DB_DATABASE', env('MYSQLDATABASE', env('MYSQL_DATABASE', 'laravel'))),
             'username' => env('DB_USERNAME', env('MYSQLUSER', 'root')),
-            'password' => env('DB_PASSWORD', env('MYSQLPASSWORD', '')),
+            'password' => env('DB_PASSWORD', env('MYSQLPASSWORD', env('MYSQL_ROOT_PASSWORD', ''))),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
@@ -59,6 +59,9 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                PDO::ATTR_TIMEOUT => 30,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
             ]) : [],
         ],
 

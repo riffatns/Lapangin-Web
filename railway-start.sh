@@ -3,17 +3,30 @@
 echo "🚀 Starting Lapangin Railway deployment..."
 
 # Check if we have database environment variables
-if [ -z "$MYSQLHOST" ]; then
-    echo "❌ Error: MYSQLHOST environment variable not set"
+if [ -z "$MYSQLHOST" ] && [ -z "$RAILWAY_PRIVATE_DOMAIN" ]; then
+    echo "❌ Error: Database environment variables not set"
     echo "Make sure MySQL service is added to Railway project"
+    echo "Available env vars:"
+    env | grep -E "(MYSQL|DB_|RAILWAY)" | sort
     exit 1
 fi
 
+# Use Railway variables if available
+DB_HOST=${MYSQLHOST:-$RAILWAY_PRIVATE_DOMAIN}
+DB_PORT=${MYSQLPORT:-3306}
+DB_DATABASE=${MYSQLDATABASE:-$MYSQL_DATABASE}
+DB_USER=${MYSQLUSER:-root}
+DB_PASSWORD=${MYSQLPASSWORD:-$MYSQL_ROOT_PASSWORD}
+
 echo "📡 Database connection info:"
-echo "   Host: $MYSQLHOST"
-echo "   Port: $MYSQLPORT"
-echo "   Database: $MYSQLDATABASE"
-echo "   User: $MYSQLUSER"
+echo "   Host: $DB_HOST"
+echo "   Port: $DB_PORT"
+echo "   Database: $DB_DATABASE"
+echo "   User: $DB_USER"
+
+# Run detailed database debug
+echo "🔍 Running detailed database debug..."
+php debug-railway-db.php
 
 # Wait for database with timeout
 echo "⏳ Waiting for database connection..."
