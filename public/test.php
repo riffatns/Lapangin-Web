@@ -16,16 +16,16 @@ echo "<!DOCTYPE html>
 
 try {
     // Try Railway MySQL variables first, then fallback to standard Laravel variables
-    $host = $_ENV['MYSQLHOST'] ?? $_ENV['DB_HOST'] ?? '127.0.0.1';
-    $database = $_ENV['MYSQLDATABASE'] ?? $_ENV['DB_DATABASE'] ?? 'lapangin_db';
-    $username = $_ENV['MYSQLUSER'] ?? $_ENV['DB_USERNAME'] ?? 'root';
-    $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['DB_PASSWORD'] ?? '';
-    $port = $_ENV['MYSQLPORT'] ?? $_ENV['DB_PORT'] ?? '3306';
+    $host = getenv('MYSQLHOST') ?: getenv('DB_HOST') ?: '127.0.0.1';
+    $database = getenv('MYSQLDATABASE') ?: getenv('DB_DATABASE') ?: 'lapangin_db';
+    $username = getenv('MYSQLUSER') ?: getenv('DB_USERNAME') ?: 'root';
+    $password = getenv('MYSQLPASSWORD') ?: getenv('DB_PASSWORD') ?: '';
+    $port = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
     
     echo "<p><strong>Connecting to:</strong> $host:$port</p>";
     echo "<p><strong>Database:</strong> $database</p>";
     echo "<p><strong>Username:</strong> $username</p>";
-    echo "<p><strong>Available ENV vars:</strong> " . (isset($_ENV['MYSQLHOST']) ? 'MYSQLHOST ✓' : 'MYSQLHOST ✗') . " | " . (isset($_ENV['DB_HOST']) ? 'DB_HOST ✓' : 'DB_HOST ✗') . "</p>";
+    echo "<p><strong>Using:</strong> " . (getenv('MYSQLHOST') ? 'Railway MySQL vars' : 'Laravel DB vars') . "</p>";
     
     $pdo = new PDO("mysql:host=$host;dbname=$database", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
