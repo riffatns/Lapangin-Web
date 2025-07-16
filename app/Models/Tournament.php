@@ -11,29 +11,34 @@ class Tournament extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'sport_id',
         'organizer_id',
+        'organizer_type',
+        'venue_id',
         'location',
-        'start_date',
-        'end_date',
-        'registration_deadline',
+        'tournament_start',
+        'tournament_end',
+        'registration_start',
+        'registration_end',
+        'tournament_type',
         'max_participants',
         'current_participants',
         'entry_fee',
         'prize_pool',
-        'format',
         'skill_level',
         'status',
         'rules',
-        'image'
+        'created_by',
+        'is_public'
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-        'registration_deadline' => 'datetime',
+        'tournament_start' => 'datetime',
+        'tournament_end' => 'datetime',
+        'registration_start' => 'datetime',
+        'registration_end' => 'datetime',
         'entry_fee' => 'decimal:2',
         'prize_pool' => 'decimal:2'
     ];
@@ -67,13 +72,13 @@ class Tournament extends Model
     // Scopes
     public function scopeUpcoming($query)
     {
-        return $query->where('start_date', '>=', Carbon::now())
+        return $query->where('tournament_start', '>=', Carbon::now())
                     ->whereIn('status', ['registration_open', 'registration_closed', 'upcoming']);
     }
 
     public function scopeRegistrationOpen($query)
     {
-        return $query->where('registration_deadline', '>=', Carbon::now())
+        return $query->where('registration_end', '>=', Carbon::now())
                     ->where('status', 'registration_open');
     }
 
@@ -90,20 +95,20 @@ class Tournament extends Model
     // Accessors
     public function getFormattedRegistrationDeadlineAttribute()
     {
-        return $this->registration_deadline ? 
-            $this->registration_deadline->setTimezone(new \DateTimeZone('Asia/Jakarta'))->format('d M Y H:i') : '';
+        return $this->registration_end ? 
+            $this->registration_end->setTimezone(new \DateTimeZone('Asia/Jakarta'))->format('d M Y H:i') : '';
     }
 
     public function getFormattedStartDateAttribute()
     {
-        return $this->start_date ? 
-            $this->start_date->setTimezone(new \DateTimeZone('Asia/Jakarta'))->format('d M Y H:i') : '';
+        return $this->tournament_start ? 
+            $this->tournament_start->setTimezone(new \DateTimeZone('Asia/Jakarta'))->format('d M Y H:i') : '';
     }
 
     public function getFormattedEndDateAttribute()
     {
-        return $this->end_date ? 
-            $this->end_date->setTimezone(new \DateTimeZone('Asia/Jakarta'))->format('d M Y H:i') : '';
+        return $this->tournament_end ? 
+            $this->tournament_end->setTimezone(new \DateTimeZone('Asia/Jakarta'))->format('d M Y H:i') : '';
     }
 
     public function getAvailableSlotsAttribute()
@@ -119,14 +124,14 @@ class Tournament extends Model
     public function getIsRegistrationOpenAttribute()
     {
         $now = Carbon::now();
-        return $this->registration_deadline >= $now && 
+        return $this->registration_end >= $now && 
                $this->status === 'registration_open' &&
                !$this->is_full;
     }
 
     public function getIsUpcomingAttribute()
     {
-        return $this->start_date >= Carbon::now() && 
+        return $this->tournament_start >= Carbon::now() && 
                in_array($this->status, ['registration_open', 'registration_closed', 'upcoming']);
     }
 

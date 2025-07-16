@@ -103,7 +103,7 @@ class CommunityController extends Controller
         $tournaments = Tournament::with(['sport', 'creator'])
             ->upcoming()
             ->public()
-            ->orderBy('registration_deadline', 'asc')
+            ->orderBy('registration_end', 'asc')
             ->get()
             ->map(function($tournament) use ($user) {
                 $tournament->is_participant = $tournament->participants()
