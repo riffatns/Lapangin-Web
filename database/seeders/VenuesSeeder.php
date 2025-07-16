@@ -311,7 +311,7 @@ class VenuesSeeder extends Seeder
                 'address' => 'Jl. Margahayu No. 88, Bandung',
                 'phone' => '022-68697071',
                 'price_per_hour' => 100000,
-                'main_image' => 'https://images.unsplash.com/photo-1594736797933-d0c3668a9c78?w=800&h=600&fit=crop',
+                'main_image' => 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
                 'images' => ['venue15.jpg'],
                 'facilities' => ['Bola Beach Volley', 'Net Beach', 'Gazebo', 'Shower Outdoor', 'Bar'],
                 'open_time' => '08:00',
