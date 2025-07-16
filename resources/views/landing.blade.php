@@ -340,9 +340,15 @@
       <a href="#contact" onclick="smoothScrollTo('contact')">Contact</a>
     </nav>
     <div class="social-icons">
-      <a href="#" title="Instagram">📷</a>
-      <a href="#" title="Website">🌐</a>
-      <a href="#" title="Twitter">🐦</a>
+      <a href="#" title="Instagram" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="#" title="Website" aria-label="Website">
+        <i class="fas fa-globe"></i>
+      </a>
+      <a href="#" title="Twitter" aria-label="Twitter">
+        <i class="fab fa-twitter"></i>
+      </a>
     </div>
   </header>
 
