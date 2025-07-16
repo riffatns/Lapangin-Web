@@ -2,19 +2,31 @@
 // Laravel database connectivity test
 echo "=== Laravel Database Test ===\n";
 
-// Initialize Laravel
-require_once __DIR__ . '/../vendor/autoload.php';
-
-$app = require_once __DIR__ . '/../bootstrap/app.php';
-
 try {
-    // Test Laravel's database connection
-    $db = $app['db'];
+    // Initialize Laravel properly
+    require_once __DIR__ . '/../vendor/autoload.php';
+    
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+    
+    // Boot the application
+    $kernel = $app->make('Illuminate\Contracts\Http\Kernel');
+    $kernel->bootstrap();
+    
+    echo "✅ Laravel application booted successfully!\n";
+    
+    // Test database configuration
+    $config = $app['config'];
     
     echo "Laravel Database Config:\n";
-    echo "Host: " . config('database.connections.mysql.host') . "\n";
-    echo "Database: " . config('database.connections.mysql.database') . "\n";
-    echo "Username: " . config('database.connections.mysql.username') . "\n";
+    echo "Host: " . $config->get('database.connections.mysql.host') . "\n";
+    echo "Database: " . $config->get('database.connections.mysql.database') . "\n";
+    echo "Username: " . $config->get('database.connections.mysql.username') . "\n";
+    echo "Port: " . $config->get('database.connections.mysql.port') . "\n";
+    
+    // Test connection using Laravel's DB facade
+    $db = $app->make('db');
+    
+    echo "✅ Database service resolved!\n";
     
     // Test connection
     $pdo = $db->connection()->getPdo();
@@ -31,9 +43,18 @@ try {
         }
     } else {
         echo "No tables found via Laravel!\n";
+        
+        // Check if migrations table exists
+        try {
+            $migrationCount = $db->table('migrations')->count();
+            echo "Migration records: $migrationCount\n";
+        } catch (Exception $e) {
+            echo "No migrations table found\n";
+        }
     }
     
 } catch (Exception $e) {
-    echo "❌ Laravel database error: " . $e->getMessage() . "\n";
+    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
 }
 ?>
