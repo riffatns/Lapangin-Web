@@ -35,24 +35,24 @@ try {
         }
     }
     
-    echo "3. Running migration...\n";
+    echo "3. Running FRESH migration (drop all tables)...\n";
     
     // Run migration command
     $consoleKernel = $app->make('Illuminate\Contracts\Console\Kernel');
     $consoleKernel->bootstrap();
     
-    $exitCode = $consoleKernel->call('migrate', [
+    $exitCode = $consoleKernel->call('migrate:fresh', [
         '--force' => true,
         '--verbose' => true
     ]);
     
-    echo "Migration exit code: $exitCode\n";
-    echo "Migration output:\n";
+    echo "Fresh migration exit code: $exitCode\n";
+    echo "Fresh migration output:\n";
     echo $consoleKernel->output() . "\n";
     
-    echo "4. Checking tables after migration...\n";
+    echo "4. Checking tables after fresh migration...\n";
     $tables = $db->select("SHOW TABLES");
-    echo "Tables after migration: " . count($tables) . "\n";
+    echo "Tables after fresh migration: " . count($tables) . "\n";
     
     if (count($tables) > 0) {
         foreach ($tables as $table) {
@@ -60,18 +60,36 @@ try {
             echo "  - $tableName\n";
         }
         
-        echo "5. Running database seed...\n";
+        echo "5. Running database seed with fresh data...\n";
         $exitCode = $consoleKernel->call('db:seed', [
-            '--force' => true
+            '--force' => true,
+            '--verbose' => true
         ]);
         
         echo "Seed exit code: $exitCode\n";
         echo "Seed output:\n";
         echo $consoleKernel->output() . "\n";
         
-        echo "✅ Migration and seeding completed!\n";
+        echo "6. Final table count check...\n";
+        $tables = $db->select("SHOW TABLES");
+        echo "Final tables: " . count($tables) . "\n";
+        
+        // Check specific tables
+        $importantTables = ['users', 'venues', 'bookings', 'communities', 'play_together', 'tournaments'];
+        foreach ($importantTables as $tableName) {
+            $found = false;
+            foreach ($tables as $table) {
+                if (array_values((array) $table)[0] === $tableName) {
+                    $found = true;
+                    break;
+                }
+            }
+            echo "  - $tableName: " . ($found ? "✅ EXISTS" : "❌ MISSING") . "\n";
+        }
+        
+        echo "✅ Fresh migration and seeding completed!\n";
     } else {
-        echo "⚠️ No tables created after migration!\n";
+        echo "⚠️ No tables created after fresh migration!\n";
     }
     
 } catch (Exception $e) {
