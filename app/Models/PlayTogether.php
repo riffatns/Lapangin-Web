@@ -10,7 +10,7 @@ class PlayTogether extends Model
 {
     use HasFactory;
 
-    protected $table = 'play_together';
+    protected $table = 'play_togethers';
 
     protected $fillable = [
         'title',

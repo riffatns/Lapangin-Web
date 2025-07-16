@@ -75,7 +75,7 @@ try {
         echo "Final tables: " . count($tables) . "\n";
         
         // Check specific tables
-        $importantTables = ['users', 'venues', 'bookings', 'communities', 'play_together', 'tournaments'];
+        $importantTables = ['users', 'venues', 'bookings', 'communities', 'play_togethers', 'tournaments'];
         foreach ($importantTables as $tableName) {
             $found = false;
             foreach ($tables as $table) {
