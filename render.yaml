@@ -50,4 +50,4 @@ databases:
     plan: free
     region: singapore
     databaseName: lapangin_production
-    user: lapangin_user
+    user: lapangin_production_user
