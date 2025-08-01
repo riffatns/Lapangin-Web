@@ -37,6 +37,16 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
+# Copy and setup entrypoint
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Expose port and start server
 EXPOSE 8000
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
+# Debug and start server
+CMD echo "PATH: $PATH" && \
+    which php && \
+    php --version && \
+    ls -la /usr/local/bin/php* && \
+    /usr/local/bin/php artisan serve --host=0.0.0.0 --port=8000

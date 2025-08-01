@@ -5,6 +5,7 @@ services:
     region: singapore
     plan: free
     dockerfilePath: ./Dockerfile
+    buildCommand: echo "Using Docker build, skipping npm"
     envVars:
       - key: APP_NAME
         value: Lapangin
