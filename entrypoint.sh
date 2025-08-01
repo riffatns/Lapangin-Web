@@ -9,9 +9,28 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
+# Update .env with database configuration
+echo "Configuring database connection..."
+sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env
+sed -i "s/DB_HOST=.*/DB_HOST=${DB_HOST}/" .env
+sed -i "s/DB_PORT=.*/DB_PORT=${DB_PORT}/" .env
+sed -i "s/DB_DATABASE=.*/DB_DATABASE=${DB_DATABASE}/" .env
+sed -i "s/DB_USERNAME=.*/DB_USERNAME=${DB_USERNAME}/" .env
+sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=${DB_PASSWORD}/" .env
+
+echo "Database configuration:"
+grep "DB_" .env
+
 # Wait for database to be ready
-echo "Waiting for database..."
-sleep 10
+echo "Waiting for database connection..."
+for i in {1..30}; do
+    if php artisan migrate:status &>/dev/null; then
+        echo "Database connection successful!"
+        break
+    fi
+    echo "Attempt $i: Database not ready, waiting 10 seconds..."
+    sleep 10
+done
 
 # Generate app key if not exists in .env
 if ! grep -q "APP_KEY=" .env || [ -z "$(grep APP_KEY= .env | cut -d'=' -f2)" ]; then
