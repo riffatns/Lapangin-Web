@@ -23,12 +23,23 @@ grep "DB_" .env
 
 # Wait for database to be ready
 echo "Waiting for database connection..."
+echo "DB_HOST: ${DB_HOST}"
+echo "DB_PORT: ${DB_PORT}"
+echo "DB_DATABASE: ${DB_DATABASE}"
+echo "DB_USERNAME: ${DB_USERNAME}"
+
 for i in {1..30}; do
+    echo "Attempt $i: Testing database connection..."
     if php artisan migrate:status &>/dev/null; then
         echo "Database connection successful!"
         break
     fi
     echo "Attempt $i: Database not ready, waiting 10 seconds..."
+    if [ $i -eq 30 ]; then
+        echo "Failed to connect to database after 30 attempts"
+        echo "Trying to show detailed connection error:"
+        php artisan migrate:status || true
+    fi
     sleep 10
 done
 
