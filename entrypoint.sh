@@ -1,15 +1,31 @@
 #!/bin/bash
 set -e
 
-echo "=== Starting Laravel Application ==="
-echo "PHP Version:"
-/usr/local/bin/php --version
+echo "=== Laravel Setup ==="
 
-echo "=== Running migrations ==="
-/usr/local/bin/php artisan migrate --force
+# Wait for database to be ready
+echo "Waiting for database..."
+sleep 10
 
-echo "=== Running seeders ==="
-/usr/local/bin/php artisan db:seed --force
+# Generate app key if not exists
+if [ -z "$APP_KEY" ]; then
+    echo "Generating application key..."
+    php artisan key:generate --force
+fi
 
-echo "=== Starting Laravel server ==="
-exec /usr/local/bin/php artisan serve --host=0.0.0.0 --port=8000
+# Run migrations
+echo "Running database migrations..."
+php artisan migrate --force
+
+# Seed database
+echo "Seeding database..."
+php artisan db:seed --force || echo "Seeding completed or skipped"
+
+# Cache optimization for production
+echo "Optimizing application..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+echo "=== Starting Apache ==="
+exec apache2-foreground
