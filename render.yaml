@@ -5,13 +5,14 @@ services:
     region: singapore
     plan: free
     buildCommand: |
-      composer install --optimize-autoloader --no-dev
+      echo "Starting Laravel deployment..."
+      composer install --optimize-autoloader --no-dev --no-interaction
       php artisan key:generate --force
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
+      echo "Running database migrations..."
       php artisan migrate --force
-      php artisan db:seed --force
+      echo "Seeding database..."
+      php artisan db:seed --force --class=UserProfilesSeeder
+      echo "Laravel deployment completed!"
     startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
       - key: APP_NAME
