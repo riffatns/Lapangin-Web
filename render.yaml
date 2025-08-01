@@ -6,9 +6,12 @@ services:
     plan: free
     buildCommand: |
       composer install --optimize-autoloader --no-dev
+      php artisan key:generate --force
       php artisan config:cache
       php artisan route:cache
       php artisan view:cache
+      php artisan migrate --force
+      php artisan db:seed --force
     startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
       - key: APP_NAME
@@ -17,6 +20,8 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
+      - key: APP_KEY
+        generateValue: true
       - key: LOG_CHANNEL
         value: stderr
       - key: SESSION_DRIVER
@@ -25,6 +30,28 @@ services:
         value: database
       - key: QUEUE_CONNECTION
         value: database
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: lapangin-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: lapangin-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: lapangin-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: lapangin-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: lapangin-db
+          property: password
 
 databases:
   - name: lapangin-db
