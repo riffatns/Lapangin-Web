@@ -32,3 +32,9 @@ simple_*.php
 
 # Exclude test-case folder
 /tests/test-case/
+
+# Exclude scripts/excluded folder
+/scripts/excluded/
+
+# Ignore database scripts
+scripts/database/
