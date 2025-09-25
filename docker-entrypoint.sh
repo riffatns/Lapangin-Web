@@ -3,47 +3,52 @@ set -e
 
 echo "🚀 Starting Laravel application..."
 
-# Wait for database to be ready with proper connection test
-echo "⏳ Waiting for database connection..."
-echo "Database info: $DB_HOST:$DB_PORT/$DB_DATABASE"
+# Generate APP_KEY if not set
+echo "🔑 Generating application key..."
+php artisan key:generate --force
 
-# Create a simple PHP script to test database connection
-cat > /tmp/db_test.php << 'EOF'
-<?php
-$maxTries = 60; // 5 minutes
-$tries = 0;
+# Create storage link
+echo "🔗 Creating storage link..."
+php artisan storage:link --force
 
-while ($tries < $maxTries) {
-    try {
-        $host = $_ENV['DB_HOST'] ?? 'localhost';
-        $port = $_ENV['DB_PORT'] ?? '5432';
-        $database = $_ENV['DB_DATABASE'] ?? 'lapangin';
-        $username = $_ENV['DB_USERNAME'] ?? 'lapangin_user';
-        $password = $_ENV['DB_PASSWORD'] ?? '';
-        
-        $dsn = "pgsql:host=$host;port=$port;dbname=$database";
-        $pdo = new PDO($dsn, $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        echo "✅ Database connection successful!\n";
-        exit(0);
-    } catch (Exception $e) {
-        $tries++;
-        echo "⏳ Database not ready (attempt $tries/$maxTries): " . $e->getMessage() . "\n";
-        sleep(5);
-    }
-}
+# Wait for database to be ready with PostgreSQL
+echo "⏳ Waiting for PostgreSQL database connection..."
+max_attempts=30
+attempt=1
 
-echo "❌ Database connection failed after all attempts\n";
-exit(1);
-EOF
+while [ $attempt -le $max_attempts ]; do
+    if php artisan migrate:status --database=pgsql > /dev/null 2>&1; then
+        echo "✅ Database connection successful!"
+        break
+    else
+        echo "Database not ready, attempt $attempt/$max_attempts..."
+        sleep 10
+        attempt=$((attempt + 1))
+    fi
+done
 
-# Test database connection
-php /tmp/db_test.php
+if [ $attempt -gt $max_attempts ]; then
+    echo "⚠️ Database connection failed after $max_attempts attempts, proceeding anyway..."
+fi
 
-# Run the build script for initial setup
-echo "🔧 Running initial setup..."
-./build.sh
+# Run database migrations
+echo "🗄️ Running database migrations..."
+php artisan migrate --force --database=pgsql
+
+# Seed essential data
+echo "🌱 Seeding database..."
+php artisan db:seed --class=SportsSeeder --force || echo "⚠️ Sports seeder not found or failed, continuing..."
+php artisan db:seed --class=VenueSeeder --force || echo "⚠️ Venue seeder not found or failed, continuing..."
+
+# Clear and cache configuration
+echo "⚡ Optimizing Laravel..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# Set proper permissions
+echo "🔒 Setting permissions..."
+chmod -R 775 storage bootstrap/cache
 
 echo "✅ Laravel application ready!"
 
