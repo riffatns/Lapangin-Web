@@ -15,31 +15,72 @@ class PlayTogether extends Model
     protected $fillable = [
         'title',
         'description',
-        'creator_id',
+        'organizer_id',
+        'organizer_type',
         'sport_id',
-        'location',
+        'venue_id',
+        'venue_partner',
+        'venue_notes',
+        'scheduled_date',
         'scheduled_time',
+        'duration_minutes',
+        'registration_deadline',
         'max_participants',
         'current_participants',
         'skill_level',
+        'skill_requirements',
+        'auto_approve',
+        'location',
         'price_per_person',
-        'status'
+        'is_paid_event',
+        'total_cost',
+        'payment_method',
+        'payment_required_upfront',
+        'chat_enabled',
+        'communication_settings',
+        'additional_info',
+        'rules_and_terms',
+        'status',
+        'is_public',
+        'created_by'
     ];
 
     protected $casts = [
+        'scheduled_date' => 'date',
         'scheduled_time' => 'datetime',
-        'price_per_person' => 'decimal:2'
+        'registration_deadline' => 'datetime',
+        'price_per_person' => 'decimal:2',
+        'total_cost' => 'decimal:2',
+        'skill_requirements' => 'array',
+        'communication_settings' => 'array',
+        'additional_info' => 'array',
+        'venue_partner' => 'boolean',
+        'is_paid_event' => 'boolean',
+        'payment_required_upfront' => 'boolean',
+        'chat_enabled' => 'boolean',
+        'auto_approve' => 'boolean',
+        'is_public' => 'boolean'
     ];
 
     // Relationships
+    public function organizer()
+    {
+        return $this->morphTo();
+    }
+
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function sport()
     {
         return $this->belongsTo(Sport::class);
+    }
+
+    public function venue()
+    {
+        return $this->belongsTo(Venue::class);
     }
 
     public function participants()
@@ -50,6 +91,26 @@ class PlayTogether extends Model
     public function activeParticipants()
     {
         return $this->participants()->where('status', 'joined');
+    }
+
+    public function pendingParticipants()
+    {
+        return $this->participants()->where('approval_status', 'pending');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(PlayTogetherPayment::class);
+    }
+
+    public function chats()
+    {
+        return $this->hasMany(PlayTogetherChat::class);
+    }
+
+    public function recentChats()
+    {
+        return $this->chats()->orderBy('created_at', 'desc');
     }
 
     // Scopes

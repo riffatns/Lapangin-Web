@@ -1,29 +1,39 @@
 #!/bin/bash
 
-echo "Starting Vercel build process..."
+echo "🚀 Starting Lapangin Web deployment on Render..."
 
 # Install PHP dependencies
-composer install --optimize-autoloader --no-dev --no-interaction
+echo "📦 Installing Composer dependencies..."
+composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
 
-# Copy production environment
-cp .env.production .env
+# Generate application key if not exists
+echo "🔑 Generating application key..."
+php artisan key:generate --force
 
-# Clear and optimize Laravel
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
-php artisan route:clear
+# Create storage link
+echo "🔗 Creating storage link..."
+php artisan storage:link
 
-# Cache for production (if config files exist)
-if [ -f "config/app.php" ]; then
-    php artisan config:cache
-fi
+# Run database migrations
+echo "🗄️ Running database migrations..."
+php artisan migrate --force
 
-if [ -f "routes/web.php" ]; then
-    php artisan route:cache
-fi
+# Seed essential data
+echo "🌱 Seeding database..."
+php artisan db:seed --class=SportsSeeder --force
+php artisan db:seed --class=VenueSeeder --force
+
+# Clear and cache configuration
+echo "⚡ Optimizing Laravel..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 # Optimize composer autoloader
 composer dump-autoload --optimize --classmap-authoritative
 
-echo "Build completed successfully!"
+# Set proper permissions
+echo "🔒 Setting permissions..."
+chmod -R 775 storage bootstrap/cache
+
+echo "✅ Render deployment completed successfully!"

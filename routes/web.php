@@ -79,9 +79,49 @@ Route::middleware('auth')->group(function () {
     Route::post('/komunitas/{community}/join', [CommunityController::class, 'join'])->name('community.join');
     Route::post('/komunitas/{community}/leave', [CommunityController::class, 'leave'])->name('community.leave');
     
-    // PlayTogether routes
-    Route::post('/play-together/{playTogether}/join', [CommunityController::class, 'joinPlayTogether'])->name('play-together.join');
-    Route::post('/play-together/{playTogether}/leave', [CommunityController::class, 'leavePlayTogether'])->name('play-together.leave');
+    // Enhanced PlayTogether routes
+    Route::prefix('play-together')->name('play-together.')->group(function () {
+        Route::get('/', [App\Http\Controllers\PlayTogetherController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\PlayTogetherController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\PlayTogetherController::class, 'store'])->name('store');
+        Route::get('/my-events', [App\Http\Controllers\PlayTogetherController::class, 'myEvents'])->name('my-events');
+        Route::get('/{id}', [App\Http\Controllers\PlayTogetherController::class, 'show'])->name('show');
+        
+        // Participant actions
+        Route::post('/{id}/join', [App\Http\Controllers\PlayTogetherController::class, 'join'])->name('join');
+        Route::post('/{id}/leave', [App\Http\Controllers\PlayTogetherController::class, 'leave'])->name('leave');
+        
+        // Organizer actions
+        Route::post('/{id}/participants/{participantId}/approve', [App\Http\Controllers\PlayTogetherController::class, 'approveParticipant'])->name('approve-participant');
+        Route::post('/{id}/participants/{participantId}/reject', [App\Http\Controllers\PlayTogetherController::class, 'rejectParticipant'])->name('reject-participant');
+        
+        // Chat routes
+        Route::prefix('{id}/chat')->name('chat.')->group(function () {
+            Route::get('/', [App\Http\Controllers\PlayTogetherChatController::class, 'index'])->name('index');
+            Route::post('/', [App\Http\Controllers\PlayTogetherChatController::class, 'store'])->name('store');
+            Route::get('/load-more', [App\Http\Controllers\PlayTogetherChatController::class, 'loadMore'])->name('load-more');
+            Route::post('/mark-read', [App\Http\Controllers\PlayTogetherChatController::class, 'markAsRead'])->name('mark-read');
+            Route::get('/unread-count', [App\Http\Controllers\PlayTogetherChatController::class, 'getUnreadCount'])->name('unread-count');
+        });
+        
+        // Payment routes
+        Route::get('/{id}/payment', [App\Http\Controllers\PlayTogetherPaymentController::class, 'payment'])->name('payment');
+        Route::post('/{id}/payment/upload', [App\Http\Controllers\PlayTogetherPaymentController::class, 'uploadPaymentProof'])->name('payment.upload');
+        
+        Route::prefix('{id}/payments')->name('payments.')->group(function () {
+            Route::get('/', [App\Http\Controllers\PlayTogetherPaymentController::class, 'index'])->name('index');
+            Route::get('/summary', [App\Http\Controllers\PlayTogetherPaymentController::class, 'getPaymentSummary'])->name('summary');
+            Route::get('/{paymentId}', [App\Http\Controllers\PlayTogetherPaymentController::class, 'show'])->name('show');
+            Route::post('/{paymentId}/mark-paid', [App\Http\Controllers\PlayTogetherPaymentController::class, 'markAsPaid'])->name('mark-paid');
+            Route::post('/{paymentId}/upload-proof', [App\Http\Controllers\PlayTogetherPaymentController::class, 'uploadProof'])->name('upload-proof');
+            Route::post('/{paymentId}/verify', [App\Http\Controllers\PlayTogetherPaymentController::class, 'verifyPayment'])->name('verify');
+            Route::post('/{paymentId}/remind', [App\Http\Controllers\PlayTogetherPaymentController::class, 'sendReminder'])->name('remind');
+        });
+    });
+    
+    // Legacy PlayTogether routes (for backward compatibility)
+    Route::post('/play-together/{playTogether}/join', [CommunityController::class, 'joinPlayTogether'])->name('legacy.play-together.join');
+    Route::post('/play-together/{playTogether}/leave', [CommunityController::class, 'leavePlayTogether'])->name('legacy.play-together.leave');
     
     // Tournament routes
     Route::post('/tournament/{tournament}/register', [CommunityController::class, 'registerTournament'])->name('tournament.register');

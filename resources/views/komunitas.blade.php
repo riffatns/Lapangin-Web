@@ -414,6 +414,113 @@
       color: #f59e0b;
       font-weight: 600;
     }
+
+    /* Main Bareng Header */
+    .main-bareng-header {
+      background-color: #2c2c2e;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #404040;
+    }
+
+    .main-bareng-header .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .main-bareng-header .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Play Together specific styles */
+    .play-together-card {
+      position: relative;
+    }
+
+    .event-status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+    }
+
+    .event-status-badge span {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-joined {
+      background-color: #10b981;
+      color: white;
+    }
+
+    .status-full {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .status-available {
+      background-color: #22c55e;
+      color: white;
+    }
+
+    .price-tag {
+      background-color: #10b981 !important;
+      color: white !important;
+    }
+
+    .free-tag {
+      background-color: #22c55e !important;
+      color: white !important;
+    }
+
+    .approval-tag {
+      background-color: #f59e0b !important;
+      color: white !important;
+    }
+
+    .auto-tag {
+      background-color: #3b82f6 !important;
+      color: white !important;
+    }
+
+    .event-extra-info {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .empty-state-card {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 2rem;
+      background-color: #2c2c2e;
+      border-radius: 12px;
+      border: 1px solid #404040;
+    }
+
+    .empty-state-card .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+
+    .empty-state-card h3 {
+      color: #f59e0b;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state-card p {
+      color: #999;
+      margin-bottom: 1.5rem;
+    }
     
     /* Responsive */
     @media (max-width: 768px) {
@@ -561,6 +668,27 @@
         <button class="tab-btn" data-tab="tournament">Tournament</button>
       </div>
 
+      <!-- Main Bareng Header -->
+      <div class="main-bareng-header" id="main-bareng-header" style="display: none;">
+        <div class="header-content">
+          <div>
+            <h2 style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.5rem;">🤝 Main Bareng</h2>
+            <p style="color: #999; font-size: 0.95rem;">Temukan teman bermain dan bergabung dalam event olahraga</p>
+          </div>
+          <div class="header-actions" style="display: flex; gap: 1rem;">
+            <a href="{{ route('play-together.my-events') }}" class="action-btn btn-secondary" style="text-decoration: none;">
+              <span>📋</span> My Events
+            </a>
+            <a href="{{ route('play-together.index') }}" class="action-btn btn-secondary" style="text-decoration: none;">
+              <span>🔍</span> Jelajahi Semua
+            </a>
+            <a href="{{ route('play-together.create') }}" class="action-btn btn-primary" style="text-decoration: none;">
+              <span>➕</span> Buat Event
+            </a>
+          </div>
+        </div>
+      </div>
+
       <!-- Communities Grid -->
       <div class="communities-grid" id="communities-grid">
         <!-- Communities Tab Content -->
@@ -682,73 +810,149 @@
 
         <!-- Play Together Tab Content -->
         <div class="tab-content" data-tab="play" style="display: none;">
-          @foreach($playTogethers as $playTogether)
-          <div class="community-card">
-            <div class="community-header {{ strtolower($playTogether->sport->name) }}">
-              <div class="community-sport-icon">
-                @switch($playTogether->sport->name)
-                  @case('Badminton')
-                    🏸
-                    @break
-                  @case('Futsal')
-                    ⚽
-                    @break
-                  @case('Tennis')
-                    🎾
-                    @break
-                  @case('Basketball')
-                    🏀
-                    @break
-                  @case('Volleyball')
-                    🏐
-                    @break
-                  @default
-                    🏅
-                @endswitch
-              </div>
-              <div class="community-name">{{ $playTogether->title }}</div>
-              <div class="community-description">{{ $playTogether->description }}</div>
-              <div class="community-stats">
-                <span class="community-stat">👥 {{ $playTogether->current_participants }}/{{ $playTogether->max_participants }}</span>
-                <span class="community-stat">📅 {{ $playTogether->formatted_scheduled_date }}</span>
-                <span class="community-stat">⏰ {{ $playTogether->formatted_scheduled_time }}</span>
-              </div>
-            </div>
-            <div class="community-content">
-              <div class="community-features">
-                <span class="feature-tag highlight">{{ $playTogether->skill_level ?? 'All Levels' }}</span>
-                @if($playTogether->venue)
-                  <span class="feature-tag">📍 {{ $playTogether->venue->name }}</span>
-                @else
-                  <span class="feature-tag">📍 {{ $playTogether->location }}</span>
-                @endif
-                @if($playTogether->price_per_person > 0)
-                  <span class="feature-tag">💰 Rp {{ number_format($playTogether->price_per_person, 0, ',', '.') }}</span>
-                @else
-                  <span class="feature-tag">🆓 Gratis</span>
-                @endif
-              </div>
-              <div class="community-actions">
-                @if($playTogether->is_participant)
-                  <form action="{{ route('play-together.leave', $playTogether) }}" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="action-btn btn-secondary">Keluar</button>
-                  </form>
-                @else
-                  @if($playTogether->is_full)
-                    <button class="action-btn btn-secondary" disabled>Penuh</button>
+          @if($playTogethers->count() > 0)
+            @foreach($playTogethers as $playTogether)
+            <div class="community-card play-together-card">
+              <div class="community-header {{ $playTogether->sport ? strtolower($playTogether->sport->name) : 'default' }}">
+                <div class="community-sport-icon">
+                  @if($playTogether->sport)
+                    @switch($playTogether->sport->name)
+                      @case('Badminton')
+                        🏸
+                        @break
+                      @case('Futsal')
+                        ⚽
+                        @break
+                      @case('Tennis')
+                        🎾
+                        @break
+                      @case('Basketball')
+                        🏀
+                        @break
+                      @case('Volleyball')
+                        🏐
+                        @break
+                      @default
+                        🏅
+                    @endswitch
                   @else
-                    <form action="{{ route('play-together.join', $playTogether) }}" method="POST" style="display: inline;">
-                      @csrf
-                      <button type="submit" class="action-btn btn-primary">Gabung</button>
-                    </form>
+                    🏅
                   @endif
-                @endif
-                <a href="#" class="action-btn btn-secondary">Detail</a>
+                </div>
+                
+                <!-- Event Status Badge -->
+                <div class="event-status-badge">
+                  @if($playTogether->is_participant)
+                    <span class="status-joined">✅ Bergabung</span>
+                  @elseif($playTogether->is_full)
+                    <span class="status-full">❌ Penuh</span>
+                  @else
+                    <span class="status-available">🟢 Tersedia</span>
+                  @endif
+                </div>
+
+                <div class="community-name">{{ $playTogether->title }}</div>
+                <div class="community-description">{{ Str::limit($playTogether->description, 80) }}</div>
+                
+                <div class="event-organizer" style="margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.8;">
+                  👤 Organizer: {{ $playTogether->organizer ? $playTogether->organizer->name : 'Unknown' }}
+                </div>
+
+                <div class="community-stats" style="margin-top: 1rem;">
+                  <span class="community-stat">👥 {{ $playTogether->current_participants }}/{{ $playTogether->max_participants }}</span>
+                  <span class="community-stat">📅 {{ $playTogether->formatted_scheduled_date }}</span>
+                  <span class="community-stat">⏰ {{ $playTogether->formatted_scheduled_time }}</span>
+                  <span class="community-stat">⏱️ {{ $playTogether->duration_hours }}h</span>
+                </div>
+              </div>
+              
+              <div class="community-content">
+                <div class="community-features">
+                  <span class="feature-tag highlight">🏆 {{ $playTogether->skill_level }}</span>
+                  @if($playTogether->venue)
+                    <span class="feature-tag">📍 {{ $playTogether->venue->name }}</span>
+                  @elseif($playTogether->location)
+                    <span class="feature-tag">📍 {{ $playTogether->location }}</span>
+                  @endif
+                  
+                  @if($playTogether->is_paid_event)
+                    <span class="feature-tag price-tag">� Rp {{ number_format($playTogether->price_per_person, 0, ',', '.') }}</span>
+                  @else
+                    <span class="feature-tag free-tag">🆓 Gratis</span>
+                  @endif
+
+                  @if($playTogether->requires_approval)
+                    <span class="feature-tag approval-tag">✋ Perlu Persetujuan</span>
+                  @else
+                    <span class="feature-tag auto-tag">⚡ Auto Join</span>
+                  @endif
+                </div>
+
+                <div class="event-extra-info" style="margin: 1rem 0; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.85rem;">
+                  @if($playTogether->payment_method && $playTogether->is_paid_event)
+                    <div style="margin-bottom: 0.25rem;">
+                      � <strong>Pembayaran:</strong> 
+                      @switch($playTogether->payment_method)
+                        @case('split_equal')
+                          Bagi Rata (Rp {{ number_format($playTogether->total_cost / $playTogether->max_participants, 0, ',', '.') }}/orang)
+                          @break
+                        @case('per_person')
+                          Per Orang (Rp {{ number_format($playTogether->price_per_person, 0, ',', '.') }})
+                          @break
+                        @case('organizer_pays')
+                          Organizer Bayar Semua
+                          @break
+                        @default
+                          {{ ucfirst(str_replace('_', ' ', $playTogether->payment_method)) }}
+                      @endswitch
+                    </div>
+                  @endif
+                  
+                  @if($playTogether->notes)
+                    <div>📝 <strong>Catatan:</strong> {{ Str::limit($playTogether->notes, 60) }}</div>
+                  @endif
+                </div>
+
+                <div class="community-actions">
+                  @if($playTogether->is_participant)
+                    <form action="{{ route('legacy.play-together.leave', $playTogether) }}" method="POST" style="display: inline; flex: 1;">
+                      @csrf
+                      <button type="submit" class="action-btn btn-secondary" style="width: 100%;" onclick="return confirm('Yakin ingin keluar dari event ini?')">
+                        🚪 Keluar
+                      </button>
+                    </form>
+                  @else
+                    @if($playTogether->is_full)
+                      <button class="action-btn btn-secondary" disabled style="flex: 1;">
+                        🚫 Penuh
+                      </button>
+                    @else
+                      <form action="{{ route('legacy.play-together.join', $playTogether) }}" method="POST" style="display: inline; flex: 1;">
+                        @csrf
+                        <button type="submit" class="action-btn btn-primary" style="width: 100%;">
+                          🤝 Gabung
+                        </button>
+                      </form>
+                    @endif
+                  @endif
+                  
+                  <a href="{{ route('play-together.show', $playTogether->id) }}" class="action-btn btn-secondary" style="flex: 1; margin-left: 0.5rem;">
+                    👁️ Detail
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-          @endforeach
+            @endforeach
+          @else
+            <div class="empty-state-card">
+              <div class="empty-icon">🏃‍♂️</div>
+              <h3>Belum Ada Event Main Bareng</h3>
+              <p>Jadilah yang pertama membuat event main bareng!</p>
+              <a href="{{ route('play-together.create') }}" class="action-btn btn-primary" style="text-decoration: none; margin-top: 1rem;">
+                ➕ Buat Event Pertama
+              </a>
+            </div>
+          @endif
         </div>
 
         <!-- Tournament Tab Content -->
@@ -841,6 +1045,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       const tabBtns = document.querySelectorAll('.tab-btn');
       const tabContents = document.querySelectorAll('.tab-content');
+      const mainBarengHeader = document.getElementById('main-bareng-header');
       
       tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -855,6 +1060,13 @@
           tabContents.forEach(content => {
             content.style.display = 'none';
           });
+          
+          // Show/hide main bareng header
+          if (activeTab === 'play') {
+            mainBarengHeader.style.display = 'block';
+          } else {
+            mainBarengHeader.style.display = 'none';
+          }
           
           // Show active tab content
           const activeContent = document.querySelector(`.tab-content[data-tab="${activeTab}"]`);

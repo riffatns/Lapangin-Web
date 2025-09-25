@@ -159,6 +159,73 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
+        // Get personalized venue recommendations based on user's booking history
+        // Only show when no filters are applied
+        $similarVenues = collect();
+        if ($sportFilter === 'all' && $locationFilter === 'all' && $distanceFilter === 'all' && !$search) {
+            // Get user's booking history to analyze patterns
+            $userBookings = $user->bookings()
+                ->with('venue.sport')
+                ->where('status', '!=', 'cancelled')
+                ->where('created_at', '>=', now()->subMonths(6)) // Last 6 months
+                ->get();
+
+            if ($userBookings->isNotEmpty()) {
+                // Analyze user's booking patterns
+                $bookedSports = $userBookings->pluck('venue.sport.slug')->unique();
+                $bookedVenueIds = $userBookings->pluck('venue_id')->unique();
+                $avgPriceRange = $userBookings->avg('venue.price_per_hour');
+                $preferredCities = $userBookings->pluck('venue.city')->unique();
+
+                // Find similar venues based on user's patterns
+                $similarVenues = Venue::with('sport')
+                    ->where('venues.is_active', true)
+                    ->whereNotIn('id', $bookedVenueIds) // Exclude already booked venues
+                    ->where(function($query) use ($bookedSports, $avgPriceRange, $preferredCities) {
+                        // Same sports that user has booked before
+                        $query->whereHas('sport', function($sportQuery) use ($bookedSports) {
+                            $sportQuery->whereIn('slug', $bookedSports);
+                        })
+                        // Similar price range (+/- 50%)
+                        ->whereBetween('price_per_hour', [
+                            $avgPriceRange * 0.5,
+                            $avgPriceRange * 1.5
+                        ])
+                        // Prefer same cities
+                        ->whereIn('city', $preferredCities);
+                    })
+                    ->orderBy('rating', 'desc')
+                    ->orderBy('total_reviews', 'desc')
+                    ->take(6)
+                    ->get();
+            }
+        }
+
+        // Get recommended venues based on user's favorite sport
+        // Only show recommendations when no filters are applied (showing all venues)
+        $recommendedVenues = collect();
+        if ($sportFilter === 'all' && $locationFilter === 'all' && $distanceFilter === 'all' && !$search) {
+            if ($userProfile && $userProfile->favorite_sport) {
+                $recommendedVenues = Venue::with('sport')
+                    ->where('venues.is_active', true)
+                    ->whereHas('sport', function($query) use ($userProfile) {
+                        $query->where('slug', $userProfile->favorite_sport);
+                    })
+                    ->orderBy('rating', 'desc')
+                    ->orderBy('total_reviews', 'desc')
+                    ->take(6)
+                    ->get();
+            } else {
+                // If no favorite sport is set, show top rated venues as recommendations
+                $recommendedVenues = Venue::with('sport')
+                    ->where('venues.is_active', true)
+                    ->orderBy('rating', 'desc')
+                    ->orderBy('total_reviews', 'desc')
+                    ->take(6)
+                    ->get();
+            }
+        }
+
         // Stats for user
         $stats = [
             'total_bookings' => $userProfile ? $userProfile->total_bookings : 0,
@@ -174,6 +241,8 @@ class DashboardController extends Controller
             'cities',
             'popularCommunities', 
             'recentBookings',
+            'recommendedVenues',
+            'similarVenues',
             'stats',
             'user',
             'sportFilter',

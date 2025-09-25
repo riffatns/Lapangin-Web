@@ -1270,7 +1270,19 @@
             <div class="similar-venues">
               @foreach($similarVenues as $similar)
               <div class="venue-card" onclick="location.href='{{ route('venue.show', $similar) }}'">
-                <div class="venue-image"></div>
+                <div class="venue-image">
+                  @if($similar->image)
+                    @if(str_starts_with($similar->image, 'http'))
+                      <img src="{{ $similar->image }}" alt="{{ $similar->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @else
+                      <img src="{{ asset('img/venues/' . $similar->image) }}" alt="{{ $similar->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @endif
+                  @else
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; font-size: 1.5rem;">
+                      📸
+                    </div>
+                  @endif
+                </div>
                 <div class="venue-info">
                   <h3 class="venue-name">{{ $similar->name }}</h3>
                   <p class="venue-location">{{ $similar->address }}</p>

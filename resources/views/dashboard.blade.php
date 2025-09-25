@@ -444,6 +444,151 @@
       font-size: 1rem;
     }
     
+    /* Recommendations Section */
+    .recommendations-section {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .recommendations-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #f59e0b, #d97706, #f59e0b);
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .recommendation-card {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(44, 44, 46, 1));
+    }
+    
+    .recommendation-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(245, 158, 11, 0.3);
+      border-color: #d97706;
+    }
+    
+    .recommendation-badge {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+      }
+    }
+    
+    .section-header {
+      position: relative;
+    }
+    
+    .recommendation-icon {
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    
+    /* All Fields Section */
+    .all-fields-section h2 {
+      position: relative;
+      padding-left: 1rem;
+    }
+    
+    .all-fields-section h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-radius: 2px;
+    }
+    
+    /* Similar Venues Section */
+    .similar-section {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.05));
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .similar-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8b5cf6, #7c3aed, #8b5cf6);
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .similar-card {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(44, 44, 46, 1));
+    }
+    
+    .similar-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+      border-color: #7c3aed;
+    }
+    
+    .similar-badge {
+      animation: match-pulse 2s infinite;
+    }
+    
+    @keyframes match-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+      }
+    }
+    
+    .similar-icon {
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+    
+    .similar-indicator {
+      background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: match-glow 1.5s ease-in-out infinite alternate;
+    }
+    
+    @keyframes match-glow {
+      0% {
+        opacity: 0.8;
+        filter: brightness(1);
+      }
+      100% {
+        opacity: 1;
+        filter: brightness(1.2);
+      }
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -468,6 +613,28 @@
       
       .cards-grid {
         grid-template-columns: 1fr;
+      }
+      
+      .recommendations-section {
+        padding: 1.5rem;
+      }
+      
+      .recommendations-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .similar-section {
+        padding: 1.5rem;
+      }
+      
+      .similar-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
       }
     }
   </style>
@@ -593,6 +760,121 @@
         </div>
       @endif
 
+      <!-- Recommended Venues Section - Only show when no filters are applied -->
+      @if($recommendedVenues->isNotEmpty() && $sportFilter === 'all' && $locationFilter === 'all' && $distanceFilter === 'all' && !$search)
+      <div class="recommendations-section" style="margin-bottom: 3rem;">
+        <div class="section-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+          <div class="recommendation-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 0.75rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 1.2rem;">⭐</span>
+          </div>
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0; color: white;">Rekomendasi Untuk Anda</h2>
+            <p style="color: #999; font-size: 0.9rem; margin: 0;">
+              @if(Auth::user()->profile?->favorite_sport)
+                Berdasarkan preferensi olahraga favorit Anda: {{ Auth::user()->profile->favoriteSport?->name }}
+              @else
+                Lapangan dengan rating terbaik - <a href="{{ route('profile') }}" style="color: #f59e0b;">Atur preferensi olahraga</a> untuk rekomendasi personal
+              @endif
+            </p>
+          </div>
+        </div>
+        
+        <div class="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          @foreach($recommendedVenues as $venue)
+          <a href="{{ route('venue.show', $venue) }}" class="field-card-link">
+            <div class="field-card recommendation-card" style="border: 2px solid #f59e0b; position: relative;">
+              <div class="recommendation-badge" style="position: absolute; top: 0.75rem; right: 0.75rem; background-color: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; z-index: 2;">
+                REKOMENDASI
+              </div>
+              <div class="card-image {{ strtolower($venue->sport->name) }}">
+                @if($venue->main_image)
+                  @if(str_starts_with($venue->main_image, 'http'))
+                    <img src="{{ $venue->main_image }}" 
+                         alt="{{ $venue->name }}" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                  @else
+                    <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
+                         alt="{{ $venue->name }}" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                  @endif
+                @endif
+                <div class="location-badge">📍 {{ $venue->location }}</div>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title">{{ $venue->name }}</h3>
+                <div class="card-rating">
+                  <span class="stars">⭐ {{ number_format((float)$venue->rating, 1) }}</span>
+                  <span class="rating-text">({{ $venue->total_reviews }})</span>
+                </div>
+                <div class="card-price">
+                  Mulai <span class="price-highlight">Rp {{ number_format((float)$venue->price_per_hour, 0, ',', '.') }}</span>/jam
+                </div>
+              </div>
+            </div>
+          </a>
+          @endforeach
+        </div>
+      </div>
+      @endif
+
+      <!-- Similar Venues Section - Based on user's booking history -->
+      @if($similarVenues->isNotEmpty() && $sportFilter === 'all' && $locationFilter === 'all' && $distanceFilter === 'all' && !$search)
+      <div class="similar-section" style="margin-bottom: 3rem;">
+        <div class="section-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+          <div class="similar-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 0.75rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 1.2rem;">🎯</span>
+          </div>
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0; color: white;">Sesuai Kebiasaan Anda</h2>
+            <p style="color: #999; font-size: 0.9rem; margin: 0;">Berdasarkan lapangan yang sering Anda booking</p>
+          </div>
+        </div>
+        
+        <div class="similar-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          @foreach($similarVenues as $venue)
+          <a href="{{ route('venue.show', $venue) }}" class="field-card-link">
+            <div class="field-card similar-card" style="border: 2px solid #8b5cf6; position: relative;">
+              <div class="similar-badge" style="position: absolute; top: 0.75rem; right: 0.75rem; background-color: #8b5cf6; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; z-index: 2;">
+                COCOK UNTUK ANDA
+              </div>
+              <div class="card-image {{ strtolower($venue->sport->name) }}">
+                @if($venue->main_image)
+                  @if(str_starts_with($venue->main_image, 'http'))
+                    <img src="{{ $venue->main_image }}" 
+                         alt="{{ $venue->name }}" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                  @else
+                    <img src="{{ asset('img/venues/' . $venue->main_image) }}" 
+                         alt="{{ $venue->name }}" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                  @endif
+                @endif
+                <div class="location-badge">📍 {{ $venue->location }}</div>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title">{{ $venue->name }}</h3>
+                <div class="card-rating">
+                  <span class="stars">⭐ {{ number_format((float)$venue->rating, 1) }}</span>
+                  <span class="rating-text">({{ $venue->total_reviews }})</span>
+                  <span class="similar-indicator" style="margin-left: auto; color: #8b5cf6; font-size: 0.8rem; font-weight: 600;">
+                    🎯 MATCH
+                  </span>
+                </div>
+                <div class="card-price">
+                  Mulai <span class="price-highlight">Rp {{ number_format((float)$venue->price_per_hour, 0, ',', '.') }}</span>/jam
+                </div>
+              </div>
+            </div>
+          </a>
+          @endforeach
+        </div>
+      </div>
+      @endif
+
+      <!-- All Fields Section -->
+      <div class="all-fields-section">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; color: white;">Semua Lapangan</h2>
+
       <!-- Fields Grid -->
       <div class="cards-grid">
         @foreach($venues as $venue)
@@ -626,6 +908,7 @@
         </a>
         @endforeach
       </div>
+      </div> <!-- End all-fields-section -->
     </div>
   </div>
 

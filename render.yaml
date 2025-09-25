@@ -4,11 +4,7 @@ services:
     env: php
     region: singapore
     plan: free
-    buildCommand: |
-      composer install --optimize-autoloader --no-dev
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
+    buildCommand: ./build.sh
     startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
       - key: APP_NAME
@@ -17,16 +13,46 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
+      - key: APP_KEY
+        generateValue: true
       - key: LOG_CHANNEL
         value: stderr
+      - key: LOG_LEVEL
+        value: error
       - key: SESSION_DRIVER
         value: database
+      - key: SESSION_LIFETIME
+        value: 120
       - key: CACHE_STORE
         value: database
       - key: QUEUE_CONNECTION
         value: database
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromDatabase:
+          name: lapangin-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: lapangin-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: lapangin-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: lapangin-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: lapangin-db
+          property: password
 
 databases:
   - name: lapangin-db
+    databaseName: lapangin
+    user: lapangin_user
     plan: free
     region: singapore

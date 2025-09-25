@@ -40,4 +40,10 @@ class UserProfile extends Model
     {
         return $this->belongsTo(Sport::class, 'favorite_sport', 'slug');
     }
+
+    // Helper method to get sport name
+    public function getFavoriteSportNameAttribute()
+    {
+        return $this->favoriteSport ? $this->favoriteSport->name : null;
+    }
 }

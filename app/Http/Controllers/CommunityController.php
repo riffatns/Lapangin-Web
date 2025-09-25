@@ -86,16 +86,32 @@ class CommunityController extends Controller
             });
 
         // Get PlayTogether sessions for "Main Bareng" tab
-        $playTogethers = PlayTogether::with(['sport', 'creator'])
-            ->upcoming()
-            ->public()
+        $playTogethers = PlayTogether::with(['sport', 'venue'])
+            ->where('status', 'open')
+            ->where('scheduled_time', '>', now())
             ->orderBy('scheduled_time', 'asc')
+            ->limit(12)
             ->get()
             ->map(function($playTogether) use ($user) {
-                $playTogether->is_participant = $playTogether->participants()
-                    ->where('user_id', $user->id)
-                    ->where('status', 'joined')
-                    ->exists();
+                // For the legacy table structure, check participation differently
+                $playTogether->is_participant = false; // Will implement later with proper participant tracking
+                $playTogether->is_full = $playTogether->current_participants >= $playTogether->max_participants;
+                $playTogether->formatted_scheduled_date = $playTogether->scheduled_time->format('d M Y');
+                $playTogether->formatted_scheduled_time = $playTogether->scheduled_time->format('H:i');
+                $playTogether->skill_level = ucfirst($playTogether->skill_level ?? 'all levels');
+                
+                // Add organizer info (since the legacy structure uses polymorphic relation)
+                $playTogether->organizer = $playTogether->organizer_type === 'App\\Models\\User' 
+                    ? \App\Models\User::find($playTogether->organizer_id) 
+                    : null;
+                
+                // Add some additional fields for display
+                $playTogether->requires_approval = false; // Legacy doesn't have this
+                $playTogether->is_paid_event = $playTogether->price_per_person > 0;
+                $playTogether->payment_method = 'per_person';
+                $playTogether->duration_hours = 2; // Default 2 hours
+                $playTogether->notes = null;
+                
                 return $playTogether;
             });
 
@@ -182,31 +198,49 @@ class CommunityController extends Controller
         return redirect()->back()->with('success', 'Berhasil keluar dari komunitas ' . $community->name);
     }
 
-    // PlayTogether methods
+    // PlayTogether methods (using legacy table structure)
     public function joinPlayTogether(PlayTogether $playTogether)
     {
         $user = Auth::user();
 
-        if (!$playTogether->canJoin($user)) {
-            return redirect()->back()->with('error', 'Tidak dapat bergabung dalam sesi main bareng ini');
+        // Check if event is still open and future
+        if ($playTogether->status !== 'open' || $playTogether->scheduled_time <= now()) {
+            return redirect()->back()->with('error', 'Event tidak tersedia untuk bergabung.');
         }
 
-        if ($playTogether->addParticipant($user)) {
-            return redirect()->back()->with('success', 'Berhasil bergabung dalam sesi main bareng: ' . $playTogether->title);
+        // Check if event is full
+        if ($playTogether->current_participants >= $playTogether->max_participants) {
+            return redirect()->back()->with('error', 'Event sudah penuh.');
         }
 
-        return redirect()->back()->with('error', 'Gagal bergabung dalam sesi main bareng');
+        // Check if organizer
+        if ($playTogether->organizer_id === $user->id && $playTogether->organizer_type === 'App\\Models\\User') {
+            return redirect()->back()->with('error', 'Anda adalah organizer event ini.');
+        }
+
+        // For legacy system, we'll just increment current_participants
+        // In a real implementation, you'd want to have a proper participants table
+        $playTogether->increment('current_participants');
+
+        return redirect()->back()->with('success', 'Berhasil bergabung dalam event: ' . $playTogether->title);
     }
 
     public function leavePlayTogether(PlayTogether $playTogether)
     {
         $user = Auth::user();
 
-        if ($playTogether->removeParticipant($user)) {
-            return redirect()->back()->with('success', 'Berhasil keluar dari sesi main bareng: ' . $playTogether->title);
+        // Check if organizer
+        if ($playTogether->organizer_id === $user->id && $playTogether->organizer_type === 'App\\Models\\User') {
+            return redirect()->back()->with('error', 'Organizer tidak bisa keluar dari event. Batalkan event jika diperlukan.');
         }
 
-        return redirect()->back()->with('error', 'Gagal keluar dari sesi main bareng');
+        // For legacy system, just decrement if there are participants
+        if ($playTogether->current_participants > 0) {
+            $playTogether->decrement('current_participants');
+            return redirect()->back()->with('success', 'Berhasil keluar dari event: ' . $playTogether->title);
+        }
+
+        return redirect()->back()->with('error', 'Tidak dapat keluar dari event ini.');
     }
 
     // Tournament methods

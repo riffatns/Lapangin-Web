@@ -1,0 +1,6 @@
+# Dokku Configuration for Laravel App
+# Create this file as .dokku/CHECKS in your repository
+
+WAIT=5
+ATTEMPTS=10
+web / "Laravel"
