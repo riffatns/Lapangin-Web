@@ -29,29 +29,12 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
-        fromDatabase:
-          name: lapangin-db
-          property: host
+        value: dpg-d3acg3i4d50c73d5m7ag-a
       - key: DB_PORT
-        fromDatabase:
-          name: lapangin-db
-          property: port
+        value: 5432
       - key: DB_DATABASE
-        fromDatabase:
-          name: lapangin-db
-          property: database
+        value: lapangin_db
       - key: DB_USERNAME
-        fromDatabase:
-          name: lapangin-db
-          property: user
+        value: lapangin_db_user
       - key: DB_PASSWORD
-        fromDatabase:
-          name: lapangin-db
-          property: password
-
-databases:
-  - name: lapangin-db
-    databaseName: lapangin
-    user: lapangin_user
-    plan: free
-    region: singapore
+        value: FuXHGa7obL65CKOwiirklyIavn738Sid
