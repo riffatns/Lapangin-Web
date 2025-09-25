@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd \
+    && php -m | grep -i pgsql
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -26,10 +27,7 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Create .env file from environment variables (will be set by Render)
-RUN cp .env.example .env || echo "APP_NAME=Lapangin" > .env
-
-# Install PHP dependencies
+# Install PHP dependencies (without .env file for now)
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
 # Set permissions

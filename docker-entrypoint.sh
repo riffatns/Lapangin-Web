@@ -3,6 +3,39 @@ set -e
 
 echo "🚀 Starting Laravel application..."
 
+# Create .env file from environment variables
+echo "📝 Creating .env file from environment variables..."
+cat > .env << EOF
+APP_NAME="${APP_NAME:-Lapangin}"
+APP_ENV="${APP_ENV:-production}"
+APP_KEY="${APP_KEY}"
+APP_DEBUG="${APP_DEBUG:-false}"
+APP_TIMEZONE=UTC
+APP_URL="${APP_URL:-http://localhost}"
+
+LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+LOG_LEVEL="${LOG_LEVEL:-error}"
+
+DB_CONNECTION="${DB_CONNECTION:-pgsql}"
+DB_HOST="${DB_HOST}"
+DB_PORT="${DB_PORT:-5432}"
+DB_DATABASE="${DB_DATABASE}"
+DB_USERNAME="${DB_USERNAME}"
+DB_PASSWORD="${DB_PASSWORD}"
+
+SESSION_DRIVER="${SESSION_DRIVER:-database}"
+SESSION_LIFETIME="${SESSION_LIFETIME:-120}"
+
+CACHE_STORE="${CACHE_STORE:-database}"
+QUEUE_CONNECTION="${QUEUE_CONNECTION:-database}"
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+MAIL_MAILER=log
+EOF
+
+echo "✅ .env file created successfully!"
+
 # Generate APP_KEY if not set
 echo "🔑 Generating application key..."
 php artisan key:generate --force
