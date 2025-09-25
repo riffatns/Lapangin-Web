@@ -26,8 +26,8 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Copy production environment file
-COPY .env.production .env
+# Create .env file from environment variables (will be set by Render)
+RUN cp .env.example .env || echo "APP_NAME=Lapangin" > .env
 
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction
