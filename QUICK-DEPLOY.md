@@ -25,9 +25,9 @@ git push origin main
 - Click "New +" → "Web Service"
 - Select: `Lapangin-Web` repository
 - Branch: `main`
-- Environment: PHP
-- Build Command: `chmod +x build.sh && ./build.sh`
-- Start Command: `php artisan serve --host=0.0.0.0 --port=$PORT`
+- Environment: **Docker**
+- Dockerfile Path: `./Dockerfile`
+- (Build dan Start commands otomatis dari Dockerfile)
 
 ### Step 5: Set Environment Variables
 Either let Render auto-detect from `render.yaml` or set manually:

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "🚀 Starting Lapangin Web deployment on Render..."
+echo "🚀 Starting Lapangin Web deployment on Render with Docker..."
 
-# Install PHP dependencies
-echo "📦 Installing Composer dependencies..."
-composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# Wait for database to be ready
+echo "⏳ Waiting for database connection..."
+sleep 10
 
 # Generate application key if not exists
 echo "🔑 Generating application key..."
@@ -29,11 +29,8 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Optimize composer autoloader
-composer dump-autoload --optimize --classmap-authoritative
-
 # Set proper permissions
 echo "🔒 Setting permissions..."
 chmod -R 775 storage bootstrap/cache
 
-echo "✅ Render deployment completed successfully!"
+echo "✅ Docker deployment completed successfully!"

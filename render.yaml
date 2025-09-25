@@ -1,11 +1,10 @@
 services:
   - type: web
     name: lapangin-web
-    env: php
+    env: docker
     region: singapore
     plan: free
-    buildCommand: ./build.sh
-    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_NAME
         value: Lapangin

@@ -215,12 +215,12 @@ git push origin main
 2. **Service Configuration:**
    ```
    Name: lapangin-web
-   Environment: PHP
+   Environment: Docker
    Region: Singapore
    Branch: main
    Root Directory: (leave blank)
-   Build Command: chmod +x build.sh && ./build.sh
-   Start Command: php artisan serve --host=0.0.0.0 --port=$PORT
+   Dockerfile Path: ./Dockerfile
+   (Build dan Start commands otomatis dari Dockerfile)
    ```
 
 3. **Environment Variables:**
