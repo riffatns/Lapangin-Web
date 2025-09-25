@@ -194,7 +194,7 @@ git push origin main
 ### Langkah 3: Create Database Service
 
 1. **Di Render Dashboard:**
-   - Click "New +" → "MySQL"
+   - Click "New +" → "PostgreSQL"
    - Name: `lapangin-db`
    - Database Name: `lapangin`
    - User: `lapangin_user`
@@ -236,7 +236,7 @@ git push origin main
    SESSION_LIFETIME=120
    CACHE_STORE=database
    QUEUE_CONNECTION=database
-   DB_CONNECTION=mysql
+   DB_CONNECTION=pgsql
    DB_HOST=[dari database service]
    DB_PORT=[dari database service]
    DB_DATABASE=lapangin

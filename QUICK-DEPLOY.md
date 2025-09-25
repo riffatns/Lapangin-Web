@@ -15,7 +15,7 @@ git push origin main
 - Authorize repository access
 
 ### Step 3: Create Database
-- Click "New +" → "MySQL"
+- Click "New +" → "PostgreSQL"
 - Name: `lapangin-db`
 - Plan: Free
 - Region: Singapore
@@ -35,7 +35,7 @@ Either let Render auto-detect from `render.yaml` or set manually:
 APP_NAME=Lapangin
 APP_ENV=production
 APP_DEBUG=false
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 (Database variables will be auto-filled from Step 3)
 ```
 

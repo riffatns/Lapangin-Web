@@ -28,7 +28,7 @@ services:
       - key: QUEUE_CONNECTION
         value: database
       - key: DB_CONNECTION
-        value: mysql
+        value: pgsql
       - key: DB_HOST
         fromDatabase:
           name: lapangin-db
